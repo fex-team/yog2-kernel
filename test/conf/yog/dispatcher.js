@@ -1,4 +1,4 @@
-module.exports.controller = {
+module.exports.dispatcher = {
     rootRouter: function(router, dispatcher){
         return router;
     },

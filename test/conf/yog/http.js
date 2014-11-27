@@ -10,7 +10,7 @@ module.exports.http = {
         'ral',
         'views',
         'methodOverride',
-        'controller',
+        'dispatcher',
         'notFound',
         'error'
     ]

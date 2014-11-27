@@ -1,7 +1,7 @@
 var dispatcher = require('./dispatcher.js');
 var express = require('express');
 
-module.exports.controller = function(app, conf){
+module.exports.dispatcher = function(app, conf){
     var dispatcherIns = new dispatcher(conf);
     //用户自定义rootRouter
     var router = new express.Router();
@@ -15,7 +15,7 @@ module.exports.controller = function(app, conf){
     }
 }
 
-module.exports.controller.defaultConf = {
+module.exports.dispatcher.defaultConf = {
     rootRouter: function(router, dispatcher){
         return router;
     }

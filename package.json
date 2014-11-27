@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_DEBUG=yog/dispatcher,yog/loader,yog/components YOG_DEBUG=true node test/test.js"
+    "test": "env NODE_DEBUG=yog/dispatcher,yog/loader,yog/components YOG_DEBUG=true node test/test.js"
   },
   "repository": {
     "type": "git",
@@ -25,7 +25,7 @@
     "response-time": "2.2.0",
     "serve-favicon": "2.1.7",
     "yog-bigpipe": "0.0.12",
-    "yog-log": "0.0.11",
+    "yog-log": "0.0.12",
     "yog-swig": "0.0.17",
     "yog-view": "0.0.18"
   }

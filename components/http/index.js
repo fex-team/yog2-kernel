@@ -28,7 +28,7 @@ module.exports.http.defaultConf = {
         'ral',
         'views',
         'methodOverride',
-        'controller',
+        'dispatcher',
         'notFound',
         'error'
     ]
