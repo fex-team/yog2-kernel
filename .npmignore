@@ -4,11 +4,7 @@
 # Logs
 /logs
 /log
-/test/log
 *.log
-
-# Tmp
-/test/tmp
 
 # Runtime data
 pids
@@ -35,5 +31,8 @@ node_modules
 # Users Environment Variables
 .lock-wscript
 
-# headdump
-*.heapsnapshot
+# test
+test
+
+# benchmark
+benchmark

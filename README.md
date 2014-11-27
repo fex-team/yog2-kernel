@@ -1,3 +1,3 @@
-### Yog2
+Yog2
 
 Next web framework in node.js
