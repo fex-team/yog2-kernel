@@ -1,13 +1,13 @@
 var express = require('express');
 var urlparser = require('url');
-var debuglog = require('debuglog')('yog2/dispatcher');
+var debuglog = require('debuglog')('yog/dispatcher');
 var fs = require('fs');
 var path = require('path');
 
 module.exports = function(options){
     var defaultRouter = options.defaultRouter || 'home';
     var defaultAction = options.defaultAction || 'index';
-    var appPath = options.appPath || path.dirname(require.main.filename);
+    var appPath = options.appPath || (path.dirname(require.main.filename) + '/app');
     debuglog('set options appPath [%s], defaultRouter [%s], defaultAction [%s]', appPath, defaultRouter, defaultAction);
     var routers = {};
     var actions = {};

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_DEBUG=yog/loader,yog/components node test/test.js"
+    "test": "NODE_DEBUG=yog/dispatcher,yog/loader,yog/components YOG_DEBUG=true node test/test.js"
   },
   "repository": {
     "type": "git",

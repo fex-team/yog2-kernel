@@ -1,11 +1,8 @@
 require('../index.js');
 yog.createServer({}, function(app){
+    var server = app.listen(8083);
+    // disable nagel
+    server.on("connection", function (socket) {
+        socket.setNoDelay(true);
+    });
 });
-
-try{
-    throw new Error('a b');
-}catch(e){
-    yog.log.fatal(e);
-}
-
-yog.log.fatal('hah  !!! 张三李四');

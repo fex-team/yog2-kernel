@@ -6,6 +6,7 @@ module.exports.controller = function(app, conf){
     //用户自定义rootRouter
     var router = new express.Router();
     var rootRouter = conf.rootRouter(router, dispatcherIns);
+    yog.dispatcher = dispatcherIns;
     //自动路由
     var autoRouter = dispatcherIns.middleware;
     return function(){

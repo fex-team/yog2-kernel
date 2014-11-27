@@ -39,12 +39,12 @@ var yog = function(){
         //执行组件初始化
         async.auto(componentFactory, cb);
     }
-
     var ins = {
         ROOT_PATH: rootPath,
         createServer: createServer,
         require: yogRequire,
         express: express,
+        DEBUG: (process.env.YOG_DEBUG === "true") || false,
         components: {}
     };
 

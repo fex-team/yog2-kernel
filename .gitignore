@@ -2,13 +2,9 @@
 .idea
 
 # Logs
-/logs
-/log
-/test/log
+logs
+log
 *.log
-
-# Tmp
-/test/tmp
 
 # Runtime data
 pids

@@ -4,5 +4,5 @@ module.exports.controller = {
     },
     defaultRouter: 'home',
     defaultAction: 'index',
-    appPath: require('path').dirname(require.main.filename)
+    appPath: require('path').dirname(require.main.filename) + '/app'
 }
