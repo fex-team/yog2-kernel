@@ -103,7 +103,7 @@ module.exports = function(options){
 
     function getAction(app, name){
         name = name || defaultAction;
-        if (!/^([\w-]+\/?)+$/.test(name)){
+        if (!/^(?:[\w\-]+\/)*[\w\-]+\/?$/.test(name)){
             return null;
         }
         actions[app] = actions[app] || {};

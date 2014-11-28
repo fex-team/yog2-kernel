@@ -5,9 +5,9 @@ var _ = require("lodash");
 var async = require('async');
 
 var yog = function(){
-    var rootPath, componentsPath, confPath, conf, app, yogRequire;
+    var rootPath, componentsPath, confPath, conf, app, yogRequire, started;
 
-    function createServer(options, cb) {
+    function initApp(options, cb) {
         options = options || {};
         //设置yog根目录，默认使用启动文件的目录
         rootPath = options.rootPath || path.dirname(require.main.filename);
@@ -17,6 +17,14 @@ var yog = function(){
         confPath = options.confPath || (rootPath + '/conf/yog');
         //设置app，未设置则直接使用express
         app = options.app || express();
+        //设置启动期的拦截
+        app.use(function(req, res, next){
+            if (started) {
+                next();
+                return;
+            }
+            res.status(503).send('Server is starting...');
+        });
         //设置全局require
         yogRequire = require('./lib/require.js')(this.rootPath);
         //加载配置
@@ -24,8 +32,10 @@ var yog = function(){
         //加载组件
         loadComponents(function(err){
             if (err) throw err;
-            cb && cb(app);
+            started = true;
+            cb && cb();
         });
+        return app;
     };
 
     function loadComponents(cb){
@@ -40,12 +50,14 @@ var yog = function(){
         async.auto(componentFactory, cb);
     }
     var ins = {
-        ROOT_PATH: rootPath,
-        createServer: createServer,
+        initApp: initApp,
         require: yogRequire,
         express: express,
-        DEBUG: (process.env.YOG_DEBUG === "true") || false,
-        components: {}
+        components: {},
+
+        ROOT_PATH: rootPath,
+        COMPONENT_TIMEOUT: process.env.COMPONENT_TIMEOUT || 3000,
+        DEBUG: (process.env.YOG_DEBUG === "true") || false
     };
 
     ins.__defineGetter__('ROOT_PATH', function(){

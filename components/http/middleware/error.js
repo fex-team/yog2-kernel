@@ -8,7 +8,7 @@ module.exports.error = function(app, conf){
                 res.send('500: Internal Server Error');
             });
         }else{
-            debuglog('start debug mode for error page'.red);
+            debuglog('start debug mode for error page'.yellow);
         }
     }
 }

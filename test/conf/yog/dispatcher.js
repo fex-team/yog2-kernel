@@ -1,5 +1,5 @@
 module.exports.dispatcher = {
-    rootRouter: function(router, dispatcher){
+    rootRouter: function(router){
         return router;
     },
     defaultRouter: 'home',

@@ -8,7 +8,7 @@ module.exports.notFound = function(app, conf){
                 res.send('404: Page not Found');
             });            
         }else{
-            debuglog('start debug mode for not found page'.red);
+            debuglog('start debug mode for not found page'.yellow);
         }
     }
 }
