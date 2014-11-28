@@ -26,7 +26,7 @@ var yog = function(){
             res.status(503).send('Server is starting...');
         });
         //设置全局require
-        yogRequire = require('./lib/require.js')(this.rootPath);
+        yogRequire = require('./lib/require.js')(rootPath);
         //加载配置
         conf = loader.loadFolder(confPath);
         //加载组件
@@ -44,7 +44,7 @@ var yog = function(){
         var componentFactory = loader.loadComponents(__dirname + '/components');
         //加载用户自定义组件
         _.extend(componentFactory, loader.loadComponents(componentsPath));
-        //注入debug信息
+        //注入组件加载代码
         componentFactory = _.mapValues(componentFactory, loader.injectComponentFactory);
         //执行组件初始化
         async.auto(componentFactory, cb);
