@@ -27,6 +27,7 @@ module.exports = function(options){
         }
         var router = getRouter(routerName);
         if (router === null){
+            debuglog('router [%s] is missed, continue', routerName);
             next();
             return;
         }
@@ -53,6 +54,7 @@ module.exports = function(options){
             }
             var action = getAction(routerName, actionName);
             if (action === null){
+                debuglog('action [%s/%s] is missed, continue', routerName, actionName);
                 req.__auto_router_failed__ = true;
                 next();
                 return;

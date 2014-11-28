@@ -1,6 +1,5 @@
 var ralMiddleware = require('node-ral').Middleware;
 var ral = require('node-ral').RAL;
-var path = require('path');
 
 module.exports.ral = function(app, conf){
     yog.RAL = ral;
