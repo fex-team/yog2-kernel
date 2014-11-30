@@ -3,12 +3,30 @@ var debuglog = require('debuglog')('yog/components');
 var loader = require('../../lib/loader.js');
 
 function core(app, conf){
+    var middlewareStart = null;
+    var startTime = function(req, res, next){
+        middlewareStart = +(new Date());
+        next();
+    };
+    var endTime = function(name){
+        return function(req, res, next){
+            debuglog('middleware [%s] cost %d ms', name, new Date() - middlewareStart);
+            next();
+        };
+    };
+
     for (var i = 0; i < conf.middleware.length; i++) {
         var component = yog.components[conf.middleware[i]];
         var start = +(new Date());
+        if (yog.DEBUG){
+            app.use(startTime);
+        }
         component && component();
+        if (yog.DEBUG){
+            app.use(endTime(conf.middleware[i]));
+        }
         debuglog('middleware [%s] loaded in %d ms', conf.middleware[i], new Date() - start);
-    };
+    }
 }
 
 var defaultConf = {

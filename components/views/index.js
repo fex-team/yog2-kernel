@@ -18,6 +18,7 @@ module.exports.views = function(app, conf){
 
     //设置view engine
     app.engine('tpl', yogView.init({
+        cache: conf.cache,
         engine: 'yog-swig'
     }, app));
 

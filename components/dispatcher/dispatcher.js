@@ -13,7 +13,7 @@ module.exports = function(options){
     var actions = {};
 
     function baseRouterHandler(req, res, next){
-        if (req.__auto_router_failed__ == true){
+        if (req.__auto_router_failed__ === true){
             next();
             return;
         }
@@ -65,11 +65,11 @@ module.exports = function(options){
                 debuglog('action is matched, remove action from url [%s]', req.url);
             }
             excute(action, req, res, next);
-        }
+        };
     }
 
     function shiftUrl(url){
-        var url = urlparser.parse(url);
+        url = urlparser.parse(url);
         var paths = url.pathname.split(/\//g);
         paths.splice(1, 1);
         return (paths.join('/') || '/') + (url.search || '');
@@ -77,26 +77,21 @@ module.exports = function(options){
 
     function getRouter(name){
         name = name || defaultRouter;
+        // router cache
+        if (routers[name] || routers[name] === null){
+            return routers[name];
+        }
         if (!/^[\w-]+$/.test(name)){
             return getRouter(defaultRouter);
-        }
-        // router cache
-        if (routers[name]){
-            return routers[name];
         }
         // get app router path
         var routerPath;
         try{
             routerPath = [appPath, name, 'router.js'].join('/');
-            routerPath = require.resolve(routerPath)
+            routerPath = require.resolve(routerPath);
         }catch(e){
-            // mismatch app name, return default router
-            if (name !== defaultRouter){
-                return getRouter(defaultRouter);
-            }else{
-                var error = new Error('missing default router [' + defaultRouter +']');
-                return null;
-            }
+            routers[name] = null;
+            return null;
         }
         var router = createActionRouter(name, routerPath);
         routers[name] = router;
@@ -105,13 +100,13 @@ module.exports = function(options){
 
     function getAction(app, name){
         name = name || defaultAction;
-        if (!/^(?:[\w\-]+\/)*[\w\-]+\/?$/.test(name)){
-            return null;
-        }
         actions[app] = actions[app] || {};
         // router cache
-        if (actions[app][name]){
+        if (actions[app][name] || actions[app][name] === null){
             return actions[app][name];
+        }
+        if (!/^(?:[\w\-]+\/)*[\w\-]+\/?$/.test(name)){
+            return null;
         }
         // get app router path
         // first lookup for action.js
@@ -125,12 +120,13 @@ module.exports = function(options){
                     'missing action [', app, '/', name, '], ',
                     'action loopup path [', [app, 'action', name + '.js'].join('/'), '] or ',
                     '[', [app, 'action', name + '/index.js'].join('/'), ']',
-                ]
+                ];
+                actions[app][name] = null;
                 return null;
             }
         }
         debuglog('get action file at [%s]', actionPath);
-        var action = require(actionPath)
+        var action = require(actionPath);
         action.__name__ = name;
         actions[app][name] = action;
         return action;
@@ -163,11 +159,11 @@ module.exports = function(options){
         // extend router
         router.action = function(actionName){
             return getAction(routerName, actionName);
-        }
+        };
 
         // load user defined router
         var customRouter = require(routerPath);
-        customRouter(router)
+        customRouter(router);
 
         // add default router ruler
         hanlder = actionHanlder(routerName);
@@ -196,5 +192,5 @@ module.exports = function(options){
             }
             return getRouter(names[0]).action(names[1]);
         }
-    }
-}
+    };
+};
