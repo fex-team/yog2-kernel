@@ -19,13 +19,14 @@ module.exports.views = function(app, conf){
     //设置view engine
     app.engine('tpl', yogView.init({
         engine: 'yog-swig'
-    }, app)); 
+    }, app));
 
     return function(){
         app.use(middleware);
-    }
-}
+    };
+};
 
 module.exports.views.defaultConf = {
-    confDir: yog.ROOT_PATH + '/conf/fis'
-}
+    confDir: yog.ROOT_PATH + '/conf/fis',
+    bigpipe: true
+};

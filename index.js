@@ -5,41 +5,17 @@ var _ = require("lodash");
 var async = require('async');
 
 var yog = function(){
-    var rootPath, componentsPath, confPath, conf, app, yogRequire, started;
+    this.express = express;
+    this.require = null;
+    this.components = {};
+    this.conf = null;
+    this.app = null;
+};
 
-    function initApp(options, cb) {
-        options = options || {};
-        //设置yog根目录，默认使用启动文件的目录
-        rootPath = options.rootPath || path.dirname(require.main.filename);
-        //设置components目录
-        componentsPath = options.componentsPath || (rootPath + '/components');
-        //设置conf目录
-        confPath = options.confPath || (rootPath + '/conf/yog');
-        //设置app，未设置则直接使用express
-        app = options.app || express();
-        //设置启动期的拦截
-        app.use(function(req, res, next){
-            if (started) {
-                next();
-                return;
-            }
-            res.status(503).send('Server is starting...');
-        });
-        //设置全局require
-        yogRequire = require('./lib/require.js')(rootPath);
-        //加载配置
-        conf = loader.loadFolder(confPath);
-        //加载组件
-        loadComponents(function(err){
-            if (err) throw err;
-            started = true;
-            cb && cb();
-        });
-        return app;
-    };
+yog.prototype.initApp = function(options, cb) {
+    var rootPath, componentsPath, confPath, started;
 
-    function loadComponents(cb){
-        var components = {};
+    function loadComponents(cb) {
         //加载默认组件
         var componentFactory = loader.loadComponents(__dirname + '/components');
         //加载用户自定义组件
@@ -49,30 +25,42 @@ var yog = function(){
         //执行组件初始化
         async.auto(componentFactory, cb);
     }
-    var ins = {
-        initApp: initApp,
-        require: yogRequire,
-        express: express,
-        components: {},
 
-        ROOT_PATH: rootPath,
-        COMPONENT_TIMEOUT: process.env.COMPONENT_TIMEOUT || 3000,
-        DEBUG: (process.env.YOG_DEBUG === "true") || false
-    };
+    options = options || {};
+    //设置yog根目录，默认使用启动文件的目录
+    rootPath = options.rootPath || path.dirname(require.main.filename);
+    //设置components目录
+    componentsPath = options.componentsPath || (rootPath + '/components');
+    //设置conf目录
+    confPath = options.confPath || (rootPath + '/conf/yog');
+    //设置app，未设置则直接使用express
+    this.app = options.app || express();
+    //设置启动期的拦截
+    this.app.use(function(req, res, next){
+        if (started) {
+            next();
+            return;
+        }
+        res.status(503).send('Server is starting...');
+    });
+    //设置全局require
+    this.require = require('./lib/require.js')(rootPath);
+    //设置全局变量
+    this.COMPONENTS_PATH = componentsPath;
+    this.ROOT_PATH = rootPath;
+    this.COMPONENT_TIMEOUT = process.env.COMPONENT_TIMEOUT || 3000;
+    this.DEBUG = (process.env.YOG_DEBUG === "true") || false;
 
-    ins.__defineGetter__('ROOT_PATH', function(){
-        return rootPath;
+    //加载配置
+    this.conf = loader.loadFolder(confPath);
+    //加载组件
+    loadComponents(function(err){
+        if (err) throw err;
+        started = true;
+        cb && cb();
     });
 
-    ins.__defineGetter__('conf', function(){
-        return conf;
-    });
-
-    ins.__defineGetter__('app', function(){
-        return app;
-    });
-
-    return ins;
+    return this.app;
 };
 
 //register global variable
