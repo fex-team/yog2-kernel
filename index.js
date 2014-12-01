@@ -1,36 +1,38 @@
+'use strict';
+
 var path = require('path');
 var express = require('express');
 var loader = require('./lib/loader.js');
-var _ = require("lodash");
+var _ = require('lodash');
 var async = require('async');
 
 var yog = function(){
     this.express = express;
     this.require = null;
-    this.components = {};
+    this.plugins = {};
     this.conf = null;
     this.app = null;
 };
 
-yog.prototype.initApp = function(options, cb) {
-    var rootPath, componentsPath, confPath, started;
+yog.prototype.bootstrap = function(options, cb) {
+    var rootPath, pluginsPath, confPath, started;
 
-    function loadComponents(cb) {
-        //加载默认组件
-        var componentFactory = loader.loadComponents(__dirname + '/components');
-        //加载用户自定义组件
-        _.extend(componentFactory, loader.loadComponents(componentsPath));
-        //注入组件加载代码
-        componentFactory = _.mapValues(componentFactory, loader.injectComponentFactory);
-        //执行组件初始化
-        async.auto(componentFactory, cb);
+    function loadPlugins(cb) {
+        //加载默认插件
+        var pluginFactory = loader.loadPlugins(__dirname + '/plugins');
+        //加载用户自定义插件
+        _.extend(pluginFactory, loader.loadPlugins(pluginsPath));
+        //注入插件加载代码
+        pluginFactory = _.mapValues(pluginFactory, loader.injectPluginFactory);
+        //执行插件初始化
+        async.auto(pluginFactory, cb);
     }
 
     options = options || {};
     //设置yog根目录，默认使用启动文件的目录
     rootPath = options.rootPath || path.dirname(require.main.filename);
-    //设置components目录
-    componentsPath = options.componentsPath || (rootPath + '/components');
+    //设置plugins目录
+    pluginsPath = options.pluginsPath || (rootPath + '/plugins');
     //设置conf目录
     confPath = options.confPath || (rootPath + '/conf/yog');
     //设置app，未设置则直接使用express
@@ -46,15 +48,15 @@ yog.prototype.initApp = function(options, cb) {
     //设置全局require
     this.require = require('./lib/require.js')(rootPath);
     //设置全局变量
-    this.COMPONENTS_PATH = componentsPath;
+    this.PLUGINS_PATH = pluginsPath;
     this.ROOT_PATH = rootPath;
-    this.COMPONENT_TIMEOUT = process.env.COMPONENT_TIMEOUT || 3000;
-    this.DEBUG = (process.env.YOG_DEBUG === "true") || false;
+    this.PLUGIN_TIMEOUT = process.env.PLUGIN_TIMEOUT || 3000;
+    this.DEBUG = (process.env.YOG_DEBUG === 'true') || false;
 
     //加载配置
     this.conf = loader.loadFolder(confPath);
-    //加载组件
-    loadComponents(function(err){
+    //加载插件
+    loadPlugins(function(err){
         if (err) throw err;
         started = true;
         cb && cb();

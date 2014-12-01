@@ -3,8 +3,8 @@ module.exports.static = function(app, conf){
         app.use(conf.urlPattern, yog.express.static(conf.staticPath, conf.cache));
         //拦截404
         app.use(conf.urlPattern, conf.notFound);        
-    }
-}
+    };
+};
 
 module.exports.static.defaultConf = {
     cache: {
@@ -16,4 +16,4 @@ module.exports.static.defaultConf = {
         res.status(404);
         res.send('404: Resource not Found');
     }
-}
+};

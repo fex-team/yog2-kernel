@@ -1,4 +1,4 @@
-var debuglog = require('debuglog')('yog/components');
+var debuglog = require('debuglog')('yog/plugins');
 
 module.exports.notFound = function(app, conf){
     return function(){
@@ -10,5 +10,5 @@ module.exports.notFound = function(app, conf){
         }else{
             debuglog('start debug mode for not found page'.yellow);
         }
-    }
-}
+    };
+};

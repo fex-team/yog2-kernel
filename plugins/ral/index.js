@@ -7,10 +7,10 @@ module.exports.ral = function(app, conf){
     //ral初始化由中间件完成
     return function(){
         app.use(ralMiddleware(conf));
-    }
-}
+    };
+};
 
 module.exports.ral.defaultConf = {
     confDir: yog.ROOT_PATH + '/conf/ral',
     logger: require('../log').defaultConf
-}
+};

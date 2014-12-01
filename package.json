@@ -1,10 +1,10 @@
 {
   "name": "yog2-kernel",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "env NODE_DEBUG=yog/dispatcher,yog/loader,yog/components YOG_DEBUG=true node test/test.js"
+    "test": "env NODE_DEBUG=yog/dispatcher,yog/loader,yog/plugins YOG_DEBUG=true node test/test.js"
   },
   "repository": {
     "type": "git",

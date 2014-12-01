@@ -1,3 +1,5 @@
+'use strict';
+
 var express = require('express');
 var urlparser = require('url');
 var debuglog = require('debuglog')('yog/dispatcher');
@@ -17,6 +19,7 @@ module.exports = function(options){
             next();
             return;
         }
+        req.__dispatcher_start_time__ = +new Date();
         var routerName = null;
         if (req.params.router){
             debuglog('trying to get router [%s]', req.params.router);
@@ -45,6 +48,7 @@ module.exports = function(options){
             debuglog('user defined router was not found, [%s] lookup for auto dispatcher', req.url);
             var url = urlparser.parse(req.url);
             var urlPath = url.pathname.replace(/^\//, '').replace(/\/$/, '');
+            var actionName = null;
             if (urlPath){
                 debuglog('trying to get action [%s]', urlPath);
                 actionName = urlPath;
@@ -133,6 +137,12 @@ module.exports = function(options){
     }
 
     function excute(action, req, res, next){
+        debuglog(
+            'disptacher for [%s] cost [%s] ms',
+            req.originalUrl,
+            new Date() - req.__dispatcher_start_time__
+        );
+
         var verbAction = action[req.method.toLowerCase()];
         debuglog('start action excution [%s] with method [%s]', action.__name__, req.method);
         if (verbAction){
@@ -166,7 +176,7 @@ module.exports = function(options){
         customRouter(router);
 
         // add default router ruler
-        hanlder = actionHanlder(routerName);
+        var hanlder = actionHanlder(routerName);
         router.all('*', hanlder);
 
         router.__name__ = routerName;

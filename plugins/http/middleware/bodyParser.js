@@ -6,11 +6,11 @@ module.exports.bodyParser = function(app, conf){
 
         // parse application/json
         app.use(bodyParser.json());
-    }
-}
+    };
+};
 
 module.exports.bodyParser.defaultConf = {
     urlencoded: {
         extended: false
     }
-}
+};

@@ -1,40 +1,60 @@
 var _ = require('lodash');
-var debuglog = require('debuglog')('yog/components');
+var debuglog = require('debuglog')('yog/plugins');
 var loader = require('../../lib/loader.js');
+var MIDDLEWARE_DEBUG = process.env.MIDDLEWARE_DEBUG === "true";
 
 function core(app, conf){
-    var middlewareStart = null;
-    var startTime = function(req, res, next){
-        middlewareStart = +(new Date());
-        next();
-    };
-    var endTime = function(name){
+    var startTime = function(name){
         return function(req, res, next){
-            debuglog('middleware [%s] cost %d ms', name, new Date() - middlewareStart);
+            req.__MIDDLEWARE_START__ = +(new Date());
+            req.__CURRENT_MIDDLEWARE__ = name;
             next();
         };
     };
 
+    var endTime = function(name){
+        return function(req, res, next){
+            debuglog(
+                'middleware [%s] cost %d ms',
+                name,
+                new Date() - req.__MIDDLEWARE_START__
+            );
+            next();
+        };
+    };
+
+    if (MIDDLEWARE_DEBUG){
+        app.use(function(req, res, next){
+            res.on('finish', function(){
+                debuglog(
+                    'middleware [%s] cost %d ms', 
+                    req.__CURRENT_MIDDLEWARE__, 
+                    new Date() - req.__MIDDLEWARE_START__
+                );
+            });
+            next();
+        });
+    } 
     for (var i = 0; i < conf.middleware.length; i++) {
-        var component = yog.components[conf.middleware[i]];
+        var component = yog.plugins[conf.middleware[i]];
         var start = +(new Date());
-        if (yog.DEBUG){
-            app.use(startTime);
+        if (MIDDLEWARE_DEBUG){
+            app.use(startTime(conf.middleware[i]));
         }
         component && component();
-        if (yog.DEBUG){
+        if (MIDDLEWARE_DEBUG){
             app.use(endTime(conf.middleware[i]));
         }
         debuglog('middleware [%s] loaded in %d ms', conf.middleware[i], new Date() - start);
-    }
+    }   
 }
 
 var defaultConf = {
     middleware: [
         'favicon',
         'compression',
-        'responseTime',
         'static',
+        'responseTime',
         'cookieParser',
         'bodyParser',
         'log',
@@ -45,7 +65,7 @@ var defaultConf = {
         'notFound',
         'error'
     ]
-}
+};
 
 //此处有一个恶心的实现，需要自行合并http的conf，因为http组件需要在require的时候就获得合并后的配置
 yog.conf.http = _.extend(defaultConf, yog.conf.http);

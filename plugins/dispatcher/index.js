@@ -1,3 +1,5 @@
+'use strict';
+
 var dispatcher = require('./dispatcher.js');
 var express = require('express');
 
@@ -13,11 +15,11 @@ module.exports.dispatcher = function(app, conf){
     return function(){
         app.use(rootRouter);
         app.use(autoRouter);
-    }
-}
+    };
+};
 
 module.exports.dispatcher.defaultConf = {
     rootRouter: function(router, dispatcher){
         return router;
     }
-}
+};
