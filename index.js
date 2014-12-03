@@ -34,7 +34,7 @@ yog.prototype.bootstrap = function(options, cb) {
     //设置plugins目录
     pluginsPath = options.pluginsPath || (rootPath + '/plugins');
     //设置conf目录
-    confPath = options.confPath || (rootPath + '/conf/yog');
+    confPath = options.confPath || (rootPath + '/conf/plugins');
     //设置app，未设置则直接使用express
     this.app = options.app || express();
     //设置启动期的拦截
