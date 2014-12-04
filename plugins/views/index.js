@@ -22,6 +22,10 @@ module.exports.views = function(app, conf){
         engine: 'yog-swig'
     }, app));
 
+    if (conf.cache){
+        app.enable('view cache');
+    }
+
     return function(){
         app.use(middleware);
     };
