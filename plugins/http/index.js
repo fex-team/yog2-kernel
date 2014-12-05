@@ -36,16 +36,25 @@ function core(app, conf){
         });
     } 
     for (var i = 0; i < conf.middleware.length; i++) {
-        var component = yog.plugins[conf.middleware[i]];
+        var middleware = conf.middleware[i];
+        // 如果是直接配置的中间件，则直接加载
+        if (typeof middleware === 'function'){
+            app.use(middleware);
+            continue;
+        }
+        var component = yog.plugins[middleware];
         var start = +(new Date());
         if (MIDDLEWARE_DEBUG){
-            app.use(startTime(conf.middleware[i]));
+            app.use(startTime(middleware));
         }
-        component && component();
+        if (!component){
+            throw new Error('middleware ' + middleware + ' not found');
+        }
+        component();
         if (MIDDLEWARE_DEBUG){
-            app.use(endTime(conf.middleware[i]));
+            app.use(endTime(middleware));
         }
-        debuglog('middleware [%s] loaded in %d ms', conf.middleware[i], new Date() - start);
+        debuglog('middleware [%s] loaded in %d ms', middleware, new Date() - start);
     }   
 }
 
@@ -71,6 +80,10 @@ var defaultConf = {
 yog.conf.http = _.extend(defaultConf, yog.conf.http);
 
 var tasks = _.clone(yog.conf.http.middleware);
+
+tasks = _.remove(tasks, function(middleware){
+    return !_.isFunction(middleware);
+});
 
 tasks.push(core);
 

@@ -8,6 +8,7 @@ var async = require('async');
 
 var yog = function(){
     this.express = express;
+    this.loader = loader;
     this.require = null;
     this.plugins = {};
     this.conf = null;
