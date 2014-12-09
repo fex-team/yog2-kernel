@@ -197,10 +197,12 @@ module.exports = function(options){
         router: getRouter,
         action: function(name){
             var names = name.split(/\//g);
-            if (names.length !== 2){
+            if (names.length < 2){
                 throw new Error('invalid action name, should be app/action');
             }
-            return getRouter(names[0]).action(names[1]);
+            var router = names.shift();
+            var action = names.join('/');
+            return getRouter(router).action(action);
         }
     };
 };
