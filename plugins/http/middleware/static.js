@@ -1,13 +1,13 @@
 module.exports.static = function(app, conf){
     return function(){
-        app.use(conf.urlPattern, yog.express.static(conf.staticPath, conf.cache));
+        app.use(conf.urlPattern, yog.express.static(conf.staticPath, conf.options));
         //拦截404
         app.use(conf.urlPattern, conf.notFound);        
     };
 };
 
 module.exports.static.defaultConf = {
-    cache: {
+    options: {
         maxAge: 0
     },
     staticPath: yog.ROOT_PATH + '/static',
