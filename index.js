@@ -69,7 +69,7 @@ yog.prototype.bootstrap = function(options, cb) {
 //register global variable
 Object.defineProperty(global, 'yog', {
     enumerable : true,
-    writable : false,
+    writable : true,
     value : new yog()
 });
 
