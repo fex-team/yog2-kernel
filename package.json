@@ -1,6 +1,6 @@
 {
   "name": "yog2-kernel",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "yog2 kernel",
   "main": "index.js",
   "keywords": [
@@ -8,7 +8,7 @@
     "fis"
   ],
   "scripts": {
-    "publish": "npm publish --registry=http://registry.npmjs.org",
+    "pub": "npm publish --registry=http://registry.npmjs.org",
     "test": "mocha --require should --reporter dot --globals yog --check-leaks test/",
     "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --globals yog --check-leaks test/",
     "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --globals yog --check-leaks --slow 0 test/"
@@ -39,7 +39,7 @@
     "yog-bigpipe": "0.0.12",
     "yog-log": "0.0.12",
     "yog-swig": "0.0.18",
-    "yog-view": "0.0.19"
+    "yog-view": "0.0.20"
   },
   "devDependencies": {
     "istanbul": "0.3.0",
