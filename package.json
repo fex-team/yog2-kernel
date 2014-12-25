@@ -1,6 +1,6 @@
 {
   "name": "yog2-kernel",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "yog2 kernel",
   "main": "index.js",
   "keywords": [
@@ -33,13 +33,13 @@
     "express": "4.10.3",
     "lodash": "2.4.1",
     "method-override": "2.3.0",
-    "node-ral": "0.0.24",
+    "node-ral": "^0.0.24",
     "response-time": "2.2.0",
     "serve-favicon": "2.1.7",
     "yog-bigpipe": "0.0.12",
     "yog-log": "0.0.12",
-    "yog-swig": "0.0.18",
-    "yog-view": "0.0.20"
+    "yog-swig": "^0.0.18",
+    "yog-view": "^0.0.22"
   },
   "devDependencies": {
     "istanbul": "0.3.0",
