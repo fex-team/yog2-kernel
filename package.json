@@ -1,6 +1,6 @@
 {
   "name": "yog2-kernel",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "yog2 kernel",
   "main": "index.js",
   "keywords": [
@@ -27,10 +27,10 @@
     "async": "0.9.0",
     "body-parser": "1.9.3",
     "colors": "^1.0.3",
-    "compression": "1.2.1",
+    "compression": "1.2.2",
     "cookie-parser": "1.3.3",
     "debuglog": "1.0.1",
-    "express": "4.10.3",
+    "express": "4.10.6",
     "lodash": "2.4.1",
     "method-override": "2.3.0",
     "node-ral": "0.0.x",
