@@ -1,15 +1,15 @@
 var _ = require('lodash');
 
-module.exports.wrapFilter = function(filter, middleware){
-    if (!filter){
+module.exports.wrapExclude = function(exclude, middleware){
+    if (!exclude){
         return middleware;
     }
     return function(req, res, next){
         var hit = false;
-        if (!_.isArray(filter)){
-            filter = [filter];
+        if (!_.isArray(exclude)){
+            exclude = [exclude];
         }
-        _(filter).forEach(function(reg){
+        _(exclude).forEach(function(reg){
             var match = req.path.match(reg);
             if (match && match[0] === req.path){
                 hit = true;

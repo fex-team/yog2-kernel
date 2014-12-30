@@ -4,10 +4,10 @@ module.exports.bodyParser = function(app, conf){
     return function(){
 
         // parse application/x-www-form-urlencoded
-        app.use(util.wrapFilter(conf.urlencoded.filter, bodyParser.urlencoded(conf.urlencoded)));
+        app.use(util.wrapExclude(conf.urlencoded.exclude, bodyParser.urlencoded(conf.urlencoded)));
 
         // parse application/json
-        app.use(util.wrapFilter(conf.json.filter, bodyParser.json()));
+        app.use(util.wrapExclude(conf.json.exclude, bodyParser.json()));
     };
 };
 
