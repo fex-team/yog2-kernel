@@ -11,7 +11,6 @@ module.exports.wrapFilter = function(filter, middleware){
         }
         _(filter).forEach(function(reg){
             var match = req.path.match(reg);
-            console.log(req.path, match);
             if (match && match[0] === req.path){
                 hit = true;
                 return false;
