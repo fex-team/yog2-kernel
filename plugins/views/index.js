@@ -17,6 +17,8 @@ module.exports.views = function(app, conf){
         middleware.push(yogBigPipe());
     }
 
+    app.set('views', conf.viewsDir);
+
     _(conf.engine).forEach(function(engine, name){
         //设置view engine
         app.engine(name, yogView.init({
@@ -36,6 +38,7 @@ module.exports.views = function(app, conf){
 
 module.exports.views.defaultConf = {
     confDir: yog.ROOT_PATH + '/conf/fis',
+    viewsDir: yog.ROOT_PATH + '/views',
     bigpipe: true,
     engine: {
         tpl: require('yog-swig')
