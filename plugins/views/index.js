@@ -1,6 +1,7 @@
 var mapjson = require('./mapjson.js');
 var yogView = require('yog-view');
 var yogBigPipe = require('yog-bigpipe');
+var _ = require('lodash');
 
 module.exports.views = function(app, conf){
     var middleware = [];
@@ -16,11 +17,13 @@ module.exports.views = function(app, conf){
         middleware.push(yogBigPipe());
     }
 
-    //设置view engine
-    app.engine('tpl', yogView.init({
-        cache: conf.cache,
-        engine: 'yog-swig'
-    }, app));
+    _(conf.engine).forEach(function(engine, name){
+        //设置view engine
+        app.engine(name, yogView.init({
+            cache: conf.cache,
+            engine: engine
+        }, app));
+    });
 
     if (conf.cache){
         app.enable('view cache');
@@ -33,5 +36,8 @@ module.exports.views = function(app, conf){
 
 module.exports.views.defaultConf = {
     confDir: yog.ROOT_PATH + '/conf/fis',
-    bigpipe: true
+    bigpipe: true,
+    engine: {
+        tpl: require('yog-swig')
+    }
 };
