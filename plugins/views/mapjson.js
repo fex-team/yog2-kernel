@@ -68,7 +68,6 @@ ResourceApi.prototype.lazyload = function (ns) {
     if (ns == '__global__') {
         map_json = 'map.json';
     }
-
     map_json = path.join(this.config_dir, map_json);
     
     try {

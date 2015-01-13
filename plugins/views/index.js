@@ -7,10 +7,16 @@ module.exports.views = function(app, conf){
     var middleware = [];
 
     //初始化map.json API
-    var resourceApi = mapjson({
-        config_dir: conf.confDir
+    app.fis = new mapjson.ResourceApi(conf.confDir);
+
+    middleware.push(function(req, res, next){
+        // 关闭缓存时，刷新mapjson对象
+        if (!conf.cache){
+            app.fis = new mapjson.ResourceApi(conf.confDir);
+        }
+        res.fis = app.fis;
+        next();
     });
-    middleware.push(resourceApi);
 
     //初始化bigpipe
     if (conf.bigpipe){
