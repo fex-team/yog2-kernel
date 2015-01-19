@@ -55,7 +55,7 @@ yog.prototype.bootstrap = function(options, cb) {
     this.DEBUG = (process.env.YOG_DEBUG === 'true') || false;
 
     //加载配置
-    this.conf = loader.loadFolder(confPath);
+    this.conf = loader.loadFolder(confPath, '.' + process.env.YOG_ENV || '');
     //加载插件
     loadPlugins(function(err){
         if (err) throw err;

@@ -12,12 +12,14 @@ var domain = require('domain');
 var _ = require('lodash');
 
 describe('loader.loadFolder', function(){
-    it('should load every file in folder', function(){
-        var result = loader.loadFolder(__dirname + '/loader/normal');
+    it('should load every file in folder with one level extension', function(){
+        var result = loader.loadFolder(__dirname + '/loader/normal', '');
         result.should.have.property('a');
         result.should.have.property('b');
         result.should.have.property('c');
         result.should.have.property('d');
+        result.should.have.property('e');
+        result.should.not.have.property('f');
     });
 
     it('should return empty object if path is not exist', function(){
@@ -29,6 +31,47 @@ describe('loader.loadFolder', function(){
         var result = loader.loadFolder(__dirname + '/loader/wrong_ext');
         result.should.have.property('a');
         result.should.have.property('b');
+    });
+
+    it('should load default file is normal is not exist', function(){
+        var result = loader.loadFolder(__dirname + '/loader/default');
+        result.should.have.property('a');
+        result.should.have.property('b');
+        result.a.default.should.be.false;
+        result.b.default.should.be.true;
+    });
+
+    it('should load prefer file', function(){
+        var result = loader.loadFolder(__dirname + '/loader/dev', '.dev');
+        result.should.have.property('a');
+        result.should.have.property('b');
+        result.should.have.property('c');
+        result.a.dev.should.be.true;
+        result.b.dev.should.be.true;
+        result.c.dev.should.be.false;
+    });
+
+    it('should not load unmatched subfixed file', function(){
+        var result = loader.loadFolder(__dirname + '/loader/dev', '');
+        result.should.have.property('a');
+        result.should.not.have.property('b');
+        result.should.have.property('c');
+        result.a.dev.should.be.false;
+        result.c.dev.should.be.false;
+    });
+
+    it('default and prefer should work well together', function(){
+        var result = loader.loadFolder(__dirname + '/loader/dev', '.dev');
+        result.should.have.property('a');
+        result.should.have.property('b');
+        result.should.have.property('c');
+        result.should.have.property('d');
+        result.should.have.property('f');
+        result.a.dev.should.be.true;
+        result.b.dev.should.be.true;
+        result.c.dev.should.be.false;
+        result.d.default.should.be.true;
+        result.f.default.should.be.false;
     });
 });
 
