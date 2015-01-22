@@ -6,7 +6,7 @@ var loader = require('./lib/loader.js');
 var _ = require('lodash');
 var async = require('async');
 
-var yog = function(){
+var Yog = function(){
     this.express = express;
     this.loader = loader;
     this.require = null;
@@ -15,7 +15,7 @@ var yog = function(){
     this.app = null;
 };
 
-yog.prototype.bootstrap = function(options, cb) {
+Yog.prototype.bootstrap = function(options, cb) {
     var rootPath, pluginsPath, confPath, started;
 
     function loadPlugins(cb) {
@@ -70,7 +70,7 @@ yog.prototype.bootstrap = function(options, cb) {
 Object.defineProperty(global, 'yog', {
     enumerable : true,
     writable : true,
-    value : new yog()
+    value : new Yog()
 });
 
-module.exports = yog;
+module.exports = global.yog;
