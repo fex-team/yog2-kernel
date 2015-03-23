@@ -1,7 +1,6 @@
 var fs = require('fs');
 var path = require('path');
 var idr = /^([\w0-9_\-]+):(?!(\/|\\))[^:]+$/i;
-var log;
 
 function ResourceApi(config_dir) {
     this.config_dir = config_dir;
@@ -73,9 +72,7 @@ ResourceApi.prototype.lazyload = function (ns) {
     try {
         stat = fs.statSync(map_json);
     } catch(e) {
-        log.log('fatal', {
-            stack: e
-        });
+        yog.log.fatal(map_json + ' not exist');
         return false;
     }
 
@@ -83,9 +80,7 @@ ResourceApi.prototype.lazyload = function (ns) {
         try {
             this.maps[ns] = JSON.parse(fs.readFileSync(map_json));
         } catch (e) {
-            log.log('fatal', {
-                stack: e
-            });
+            yog.log.fatal(map_json + ' parse failed');
             return false;
         }
     } else {
@@ -110,7 +105,6 @@ module.exports = function (options) {
         var destroy;
 
         res.fis = cache ? singlon : new ResourceApi(config_dir);
-        log = require('yog-log').getLogger();
 
         destroy = function() {
             res.removeListener('finish', destroy);
