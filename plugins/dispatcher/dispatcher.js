@@ -183,9 +183,16 @@ module.exports = function (options) {
         return router;
     }
 
-    function createBaseRouter() {
-        var baseRouter = express.Router();
+    var rootRouter = new express.Router();
+    var rootRouterInjector = null;
 
+    function createBaseRouter(injector) {
+        var baseRouter = new express.Router();
+        rootRouterInjector = injector;
+        rootRouterInjector(rootRouter);
+        baseRouter.use(function (req, res, next) {
+            rootRouter(req, res, next);
+        });
         baseRouter.all('/:router*', baseRouterHandler);
         baseRouter.all('*', baseRouterHandler);
 
@@ -196,8 +203,11 @@ module.exports = function (options) {
         cleanCache: function () {
             routers = {};
             actions = {};
+            // update root router
+            rootRouter = new express.Router();
+            rootRouterInjector(rootRouter);
         },
-        middleware: createBaseRouter(),
+        middleware: createBaseRouter,
         router: getRouter,
         action: function (name) {
             var names = name.split(/\//g);
