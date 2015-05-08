@@ -19,7 +19,6 @@ module.exports = function (options) {
             next();
             return;
         }
-        req.__dispatcher_start_time__ = +new Date();
         var routerName = null;
         if (req.params.router) {
             debuglog('trying to get router [%s]', req.params.router);
@@ -185,12 +184,18 @@ module.exports = function (options) {
 
     var rootRouter = new express.Router();
     var rootRouterInjector = null;
+    // lazy inject root router to prevent load router.js too early
+    var isInjected = false;
 
     function createBaseRouter(injector) {
         var baseRouter = new express.Router();
         rootRouterInjector = injector;
-        rootRouterInjector(rootRouter);
         baseRouter.use(function (req, res, next) {
+            req.__dispatcher_start_time__ = +new Date();
+            if (!isInjected) {
+                rootRouterInjector(rootRouter);
+                isInjected = true;
+            }
             rootRouter(req, res, next);
         });
         baseRouter.all('/:router*', baseRouterHandler);
@@ -205,7 +210,7 @@ module.exports = function (options) {
             actions = {};
             // update root router
             rootRouter = new express.Router();
-            rootRouterInjector(rootRouter);
+            isInjected = false;
         },
         middleware: createBaseRouter,
         router: getRouter,
