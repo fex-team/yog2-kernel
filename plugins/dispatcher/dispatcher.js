@@ -156,8 +156,12 @@ module.exports = function (options) {
                 verbAction(req, res, next);
             }
         } else {
-            debuglog('excute action [%s] with default action method', action.__name__);
-            action(req, res, next);
+            if (typeof action === 'function') {
+                debuglog('excute action [%s] with default action method', action.__name__);
+                action(req, res, next);
+            } else {
+                next();
+            }
         }
     }
 
