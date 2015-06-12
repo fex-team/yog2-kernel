@@ -1,6 +1,10 @@
 ## CHANGELOG
 
-#### 0.2.7 / 2015年05月29日
+#### 0.3.0 / 2015年06月12日
+
+当调用 `yog.dispatcher.router`, `yog.dispatcher.action`  获取不存在的 router 与 action 时，不会返回 null 或提示异常，而是将相应的请求返回404
+
+#### 0.2.7 / 2015年06月12日
 
 修复[yog2-plugin-recv-reload](https://github.com/hefangshi/yog2-plugin-recv-reload) 在全局 `npm link` 时的启动问题
 
