@@ -123,11 +123,11 @@ module.exports = function (options) {
             actionPath = [appPath, app, 'action', name + '/index.js'].join('/');
             if (!fs.existsSync(actionPath)) {
                 // mismatch action
-                var errorMsg = [
-                    'missing action [', app, '/', name, '], ',
-                    'action loopup path [', [app, 'action', name + '.js'].join('/'), '] or ',
-                    '[', [app, 'action', name + '/index.js'].join('/'), ']',
-                ];
+                // var errorMsg = [
+                //     'missing action [', app, '/', name, '], ',
+                //     'action loopup path [', [app, 'action', name + '.js'].join('/'), '] or ',
+                //     '[', [app, 'action', name + '/index.js'].join('/'), ']',
+                // ];
                 actions[app][name] = null;
                 return null;
             }
@@ -221,7 +221,6 @@ module.exports = function (options) {
         // action will go next directly
         router.action = function () {
             return function (req, res, next) {
-                console.log('pass');
                 next();
             };
         };

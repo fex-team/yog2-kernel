@@ -1,3 +1,5 @@
+'use strict';
+
 var path = require('path');
 var debuglog = require('debuglog')('yog/recv-reload');
 
@@ -46,7 +48,8 @@ module.exports['recv-reload'] = ['dispatcher',
                     var apps = Object.keys(waitingReloadApps);
                     if (apps.length === 0) {
                         reloadView();
-                    } else {
+                    }
+                    else {
                         for (var i = 0; i < apps.length; i++) {
                             reloadApp(apps[i]);
                         }
@@ -161,7 +164,8 @@ function startUploadStateCheck(timeout, cb) {
             if (periodTotal === total) {
                 debuglog('detect upload end');
                 end();
-            } else {
+            }
+            else {
                 debuglog('restart upload detect', periodTotal, total);
                 checkUplodingStatus(cb);
             }
