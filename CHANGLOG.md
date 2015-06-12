@@ -1,5 +1,9 @@
 ## CHANGELOG
 
+#### 0.2.7 / 2015年05月29日
+
+修复[yog2-plugin-recv-reload](https://github.com/hefangshi/yog2-plugin-recv-reload) 在全局 `npm link` 时的启动问题
+
 #### 0.2.6 / 2015年05月29日
 
 默认加入[yog2-plugin-recv-reload](https://github.com/hefangshi/yog2-plugin-recv-reload) 插件，无需手动安装即可使用 APP 热更新功能
