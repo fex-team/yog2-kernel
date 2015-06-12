@@ -1,6 +1,6 @@
 {
     "name": "yog2-kernel",
-    "version": "0.2.6",
+    "version": "0.2.7",
     "description": "yog2 kernel",
     "main": "index.js",
     "keywords": [
