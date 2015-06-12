@@ -1,5 +1,4 @@
 var path = require('path');
-var yog = require('yog2-kernel');
 var debuglog = require('debuglog')('yog/recv-reload');
 
 module.exports['recv-reload'] = ['dispatcher',
