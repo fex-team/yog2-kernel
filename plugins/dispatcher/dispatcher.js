@@ -13,9 +13,10 @@ module.exports = function (options) {
     debuglog('set options appPath [%s], defaultRouter [%s], defaultAction [%s]', appPath, defaultRouter, defaultAction);
     var routers = {};
     var actions = {};
+    var emptyRouter = createNotFoundAppRouter();
 
     function baseRouterHandler(req, res, next) {
-        if (req.__auto_router_failed__ === true) {
+        if (req.__autoRouterFailed__ === true) {
             next();
             return;
         }
@@ -23,12 +24,13 @@ module.exports = function (options) {
         if (req.params.router) {
             debuglog('trying to get router [%s]', req.params.router);
             routerName = req.params.router;
-        } else {
+        }
+        else {
             debuglog('trying to get default router [%s]', defaultRouter);
             routerName = defaultRouter;
         }
         var router = getRouter(routerName);
-        if (router === null) {
+        if (router === null || router.__isNotFound__) {
             debuglog('router [%s] is missed, continue', routerName);
             next();
             return;
@@ -51,14 +53,15 @@ module.exports = function (options) {
             if (urlPath) {
                 debuglog('trying to get action [%s]', urlPath);
                 actionName = urlPath;
-            } else {
+            }
+            else {
                 debuglog('trying to get default action [%s]', defaultAction);
                 actionName = defaultAction;
             }
             var action = getAction(routerName, actionName);
             if (action === null) {
                 debuglog('action [%s/%s] is missed, continue', routerName, actionName);
-                req.__auto_router_failed__ = true;
+                req.__autoRouterFailed__ = true;
                 next();
                 return;
             }
@@ -92,9 +95,10 @@ module.exports = function (options) {
         try {
             routerPath = [appPath, name, 'router.js'].join('/');
             routerPath = require.resolve(routerPath);
-        } catch (e) {
-            routers[name] = null;
-            return null;
+        }
+        catch (e) {
+            routers[name] = emptyRouter;
+            return emptyRouter;
         }
         var router = createActionRouter(name, routerPath);
         routers[name] = router;
@@ -139,7 +143,7 @@ module.exports = function (options) {
         debuglog(
             'disptacher for [%s] cost [%s] ms',
             req.originalUrl,
-            new Date() - req.__dispatcher_start_time__
+            new Date() - req.__dispatcherStartTime__
         );
 
         var verbAction = action[req.method.toLowerCase()];
@@ -151,15 +155,18 @@ module.exports = function (options) {
                     debuglog('excute action [%s] with [%s] method action', action.__name__, req.method);
                     verbAction(req, res, next);
                 });
-            } else {
+            }
+            else {
                 debuglog('excute action [%s] with [%s] method action', action.__name__, req.method);
                 verbAction(req, res, next);
             }
-        } else {
+        }
+        else {
             if (typeof action === 'function') {
                 debuglog('excute action [%s] with default action method', action.__name__);
                 action(req, res, next);
-            } else {
+            }
+            else {
                 next();
             }
         }
@@ -167,7 +174,7 @@ module.exports = function (options) {
 
 
     function createActionRouter(routerName, routerPath) {
-        var router = express.Router();
+        var router = new express.Router();
 
         // extend router
         router.action = function (actionName) {
@@ -195,7 +202,7 @@ module.exports = function (options) {
         var baseRouter = new express.Router();
         rootRouterInjector = injector;
         baseRouter.use(function (req, res, next) {
-            req.__dispatcher_start_time__ = +new Date();
+            req.__dispatcherStartTime__ = +new Date();
             if (!isInjected) {
                 rootRouterInjector(rootRouter);
                 isInjected = true;
@@ -206,6 +213,22 @@ module.exports = function (options) {
         baseRouter.all('*', baseRouterHandler);
 
         return baseRouter;
+    }
+
+    function createNotFoundAppRouter() {
+        var router = new express.Router();
+
+        // action will go next directly
+        router.action = function () {
+            return function (req, res, next) {
+                console.log('pass');
+                next();
+            };
+        };
+
+        router.__isNotFound__ = true;
+
+        return router;
     }
 
     return {
