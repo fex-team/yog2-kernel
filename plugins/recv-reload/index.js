@@ -208,6 +208,10 @@ function reloadApp(appName) {
         yog.dispatcher.cleanCache();
         debuglog('clean dispatcher cache');
     }
+    if (yog.require && yog.require.cleanCache) {
+        yog.require.cleanCache();
+        debuglog('clean yog require cache');
+    }
 }
 
 function reloadView() {
