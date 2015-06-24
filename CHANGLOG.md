@@ -1,5 +1,13 @@
 ## CHANGELOG
 
+#### 0.3.2 / 2015年06月23日
+
+修复使用 `yog.require` 加载的模块无法热加载的问题
+
+#### 0.3.1 / 2015年06月23日
+
+** 重要 ** 升级 swig 依赖，解决模板异常导致 crash 的问题
+
 #### 0.3.0 / 2015年06月12日
 
 当调用 `yog.dispatcher.router`, `yog.dispatcher.action`  获取不存在的 router 与 action 时，不会返回 null 或提示异常，而是将相应的请求返回404
