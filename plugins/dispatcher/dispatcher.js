@@ -41,6 +41,7 @@ module.exports = function (options) {
             debuglog('router is matched, remove router from url [%s]', req.url);
         }
         debuglog('[%s] lookup for user defined router', req.url);
+        req.CURRENT_APP = router.__name__;
         router(req, res, next);
     }
 
