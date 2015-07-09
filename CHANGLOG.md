@@ -1,5 +1,10 @@
 ## CHANGELOG
 
+#### 0.3.3 / 2015年07月09日
+
+- 添加 promise 接口支持。yog.Promise 提供 bluebird 库，yog.ralPromise 与 yog.ralP 提供 promise 风格的 ral 封装
+- 升级 yog-log 支持自动 APP 定位用于区分LOG
+
 #### 0.3.2 / 2015年06月23日
 
 修复使用 `yog.require` 加载的模块无法热加载的问题
