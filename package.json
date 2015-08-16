@@ -37,7 +37,7 @@
     "lodash": "2.4.1",
     "method-override": "2.3.0",
     "multiparty": "4.1.1",
-    "node-ral": "0.0.x",
+    "node-ral": "0.1.x",
     "response-time": "2.2.0",
     "serve-favicon": "2.1.7",
     "yog-bigpipe": "0.0.x",
