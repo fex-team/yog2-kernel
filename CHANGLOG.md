@@ -1,5 +1,11 @@
 ## CHANGELOG
 
+#### 0.3.4 / 2015年08月16日
+
+- 升级 node-ral
+    - 支持HTTP_PROXY
+    - HTTP协议错误会将错误码返回
+
 #### 0.3.3 / 2015年07月09日
 
 - 添加 promise 接口支持。yog.Promise 提供 bluebird 库，yog.ralPromise 与 yog.ralP 提供 promise 风格的 ral 封装
