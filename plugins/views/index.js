@@ -23,7 +23,7 @@ module.exports.views = function (app, conf) {
 
     //初始化bigpipe
     if (conf.bigpipe) {
-        middleware.push(yogBigPipe());
+        middleware.push(yogBigPipe(conf.bigpipeOpt));
     }
 
     _(conf.engine).forEach(function (engine, name) {
@@ -52,6 +52,9 @@ module.exports.views.defaultConf = {
     confDir: yog.ROOT_PATH + '/conf/fis',
     viewsDir: yog.ROOT_PATH + '/views',
     bigpipe: true,
+    bigpipeOpt: {
+        skipAnalysis: true
+    },
     tpl: {
         cache: 'memory'
     },
