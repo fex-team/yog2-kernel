@@ -1,5 +1,18 @@
 ## CHANGELOG
 
+#### 0.3.6 / 2015年09月16日
+
+- 升级代码支持lodash3.x
+- deps: lodash@3.10.1
+- deps: async@1.4.2
+- deps: bluebird@2.10.0
+- deps: express@4.13.3
+- deps: node-ral@~0.1.2
+- deps: yog-bigpipe@~0.1.0
+- deps: yog-log@~0.0.20
+- deps: yog-swig@~0.2.3
+- deps: yog-view@~0.2.1
+
 #### 0.3.5 / 2015年09月14日
 
 - 升级 yog-bigpie 至 0.1.0
