@@ -6,16 +6,17 @@ var loader = require('./lib/loader.js');
 var _ = require('lodash');
 var async = require('async');
 
-var Yog = function(){
+var Yog = function () {
     this.express = express;
     this.loader = loader;
     this.require = null;
     this.plugins = {};
     this.conf = null;
     this.app = null;
+    this._ = _;
 };
 
-Yog.prototype.bootstrap = function(options, cb) {
+Yog.prototype.bootstrap = function (options, cb) {
     var rootPath, pluginsPath, confPath, started;
 
     function loadPlugins(cb) {
@@ -39,7 +40,7 @@ Yog.prototype.bootstrap = function(options, cb) {
     //设置app，未设置则直接使用express
     this.app = options.app || express();
     //设置启动期的拦截
-    this.app.use(function(req, res, next){
+    this.app.use(function (req, res, next) {
         if (started) {
             next();
             return;
@@ -57,7 +58,7 @@ Yog.prototype.bootstrap = function(options, cb) {
     //加载配置
     this.conf = loader.loadFolder(confPath, '.' + process.env.YOG_ENV || '');
     //加载插件
-    loadPlugins(function(err){
+    loadPlugins(function (err) {
         if (err) throw err;
         started = true;
         cb && cb();
@@ -68,9 +69,9 @@ Yog.prototype.bootstrap = function(options, cb) {
 
 //register global variable
 Object.defineProperty(global, 'yog', {
-    enumerable : true,
-    writable : true,
-    value : new Yog()
+    enumerable: true,
+    writable: true,
+    value: new Yog()
 });
 
 module.exports = global.yog;

@@ -25,19 +25,18 @@ module.exports.views = function (app, conf) {
     if (conf.bigpipe) {
         middleware.push(yogBigPipe(conf.bigpipeOpt));
     }
-
-    _(conf.engine).forEach(function (engine, name) {
+    _.forIn(conf.engine, (function (engine, name) {
         //设置view engine
         var viewEngine = new yogView(app, engine, conf[name] || {});
         viewEngines.push(viewEngine);
         app.engine(name, viewEngine.renderFile.bind(viewEngine));
-    });
+    }));
 
     yog.view = {
         cleanCache: function () {
             // 清除FIS resourcemap缓存
             app.fis = new mapjson.ResourceApi(conf.confDir);
-            _(viewEngines).forEach(function (viewEngine) {
+            _.forEach(viewEngines, function (viewEngine) {
                 viewEngine.cleanCache();
             });
         }

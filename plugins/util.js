@@ -1,24 +1,25 @@
 var _ = require('lodash');
 
-module.exports.wrapExclude = function(exclude, middleware){
-    if (!exclude){
+module.exports.wrapExclude = function (exclude, middleware) {
+    if (!exclude) {
         return middleware;
     }
-    return function(req, res, next){
+    return function (req, res, next) {
         var hit = false;
-        if (!_.isArray(exclude)){
+        if (!_.isArray(exclude)) {
             exclude = [exclude];
         }
-        _(exclude).forEach(function(reg){
+        _.forEach(exclude, function (reg) {
             var match = req.path.match(reg);
-            if (match && match[0] === req.path){
+            if (match && match[0] === req.path) {
                 hit = true;
                 return false;
             }
         });
-        if (hit){
+        if (hit) {
             next();
-        }else{
+        }
+        else {
             middleware(req, res, next);
         }
     };
