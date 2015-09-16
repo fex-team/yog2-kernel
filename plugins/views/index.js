@@ -25,12 +25,12 @@ module.exports.views = function (app, conf) {
     if (conf.bigpipe) {
         middleware.push(yogBigPipe(conf.bigpipeOpt));
     }
-    _.forIn(conf.engine, (function (engine, name) {
+    _.forIn(conf.engine, function (engine, name) {
         //设置view engine
         var viewEngine = new yogView(app, engine, conf[name] || {});
         viewEngines.push(viewEngine);
         app.engine(name, viewEngine.renderFile.bind(viewEngine));
-    }));
+    });
 
     yog.view = {
         cleanCache: function () {
