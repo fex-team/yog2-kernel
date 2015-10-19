@@ -5,11 +5,10 @@
 - 升级 yog-bigpipe@~0.2.0
 - 升级 yog-view@~0.3.0
 - 升级 yog-swig@~0.2.4
-
-* 支持嵌套 Pagalet 调用，如 PageletA 中声明了 PageletB，则可以通过 BigPipe.load('B@A') 获取 PageletB
-* 支持嵌套 Pagelet 合并加载，如 PageletA 中声明了 PageletB，则请求 PageletA 时会一并返回 PageletB
-* 添加 widget 的 lazy 属性，声明了 `lazy="true"` 后，嵌套的Pagelet不会合并加载，而需要手动执行 BigPipe.load
-* 添加客户端 Pagelet 缓存功能，具体功能参见 [文档](https://github.com/fex-team/yog2-app-template/tree/master/client/static/js)，需要手动更新 bigpipe.js 文件以支持此功能
+- 支持嵌套 Pagalet 调用，如 PageletA 中声明了 PageletB，则可以通过 BigPipe.load('B@A') 获取 PageletB
+- 支持嵌套 Pagelet 合并加载，如 PageletA 中声明了 PageletB，则请求 PageletA 时会一并返回 PageletB
+- 添加 widget 的 lazy 属性，声明了 `lazy="true"` 后，嵌套的Pagelet不会合并加载，而需要手动执行 BigPipe.load
+- 添加客户端 Pagelet 缓存功能，具体功能参见 [文档](https://github.com/fex-team/yog2-app-template/tree/master/client/static/js)，需要手动更新 bigpipe.js 文件以支持此功能
 
 #### 0.3.6 / 2015年09月16日
 
