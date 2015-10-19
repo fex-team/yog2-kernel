@@ -1,14 +1,18 @@
 var compressible = require('compressible');
 
-module.exports.compression = function(app, conf){
-    return function(){
+module.exports.compression = function (app, conf) {
+    return function () {
         app.use(require('compression')(conf));
     };
 };
 
 module.exports.compression.defaultConf = {
-    filter: function(req, res){
-        if (res.bigpipe && Object.keys(res.bigpipe.sources).length !== 0){
+    filter: function (req, res) {
+        if (res.bigpipe && res.bigpipe.isQuicklingMode()) {
+            return true;
+        }
+
+        if (res.bigpipe && Object.keys(res.bigpipe.sources).length !== 0) {
             return false;
         }
 
