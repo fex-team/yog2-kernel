@@ -41,8 +41,8 @@
     "node-ral": "~0.4.0",
     "yog-log": "~0.0.20",
     "yog-swig": "~0.2.4",
-    "yog-bigpipe": "~0.2.0",
-    "yog-view": "~0.3.0"
+    "yog-bigpipe": "~0.2.3",
+    "yog-view": "~0.3.3"
   },
   "devDependencies": {
     "istanbul": "0.3.0",
