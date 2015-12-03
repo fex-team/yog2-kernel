@@ -1,5 +1,16 @@
 ## CHANGELOG
 
+#### 0.5.0/ 2015年12月3日
+
+- deps: node-ral@0.4.0, 支持mock, degrade配置
+- deps: yog-view@0.3.3
+- deps: yog-bigpipe@0.2.3
+- won't handle compression filter, 支持bigpipe的gzip
+
+#### 0.4.1/ 2015年11月30日
+
+- 改进根据环境变量管理配置的功能
+
 #### 0.4.0/ 2015年10月19日
 
 - 升级 yog-bigpipe@~0.2.0
