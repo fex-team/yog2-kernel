@@ -1,3 +1,5 @@
+'use strict';
+
 var debuglog = require('debuglog')('yog/plugins');
 
 module.exports.error = ['log',
@@ -5,7 +7,8 @@ module.exports.error = ['log',
         return function () {
             if (!yog.DEBUG) {
                 app.use(conf.handler);
-            } else {
+            }
+            else {
                 debuglog('start debug mode for error page'.yellow);
                 app.use(function (error, req, res, next) {
                     yog.log.fatal(error);
