@@ -1,15 +1,13 @@
 'use strict';
 
-var Promise = require('bluebird');
-
 module.exports.promise = ['ral',
     function (app, conf) {
         // 添加promise
-        yog.Promise = Promise;
+        yog.Promise = require('bluebird');
         var originRal = yog.ral;
 
         function ralPromise(name, options) {
-            return new Promise(function (resolve, reject) {
+            return new yog.Promise(function (resolve, reject) {
                 originRal(name, options).on('data', function (data) {
                     resolve(data);
                 }).on('error', function (error) {
@@ -22,11 +20,15 @@ module.exports.promise = ['ral',
         yog.ralP = ralPromise;
         if (conf.overrideRAL) {
             yog.ral = ralPromise;
-            yog.RAL = ralPromise;
+            yog.ralOrigin = yog.RAL;
+        }
+        if (conf.overridePromise && Promise) {
+            global.Promise = yog.Promise;
         }
     }
 ];
 
 module.exports.promise.defaultConf = {
-    overrideRAL: false
+    overrideRAL: false,
+    overridePromise: true
 };
