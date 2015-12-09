@@ -134,7 +134,14 @@ module.exports = function (options) {
             }
         }
         debuglog('get action file at [%s]', actionPath);
-        var action = require(actionPath);
+        var fn = require(actionPath);
+        // wrap for async/await
+        var action = function disptacherAction(req, res, next) {
+            var maybePromise = fn(req, res, next);
+            if (maybePromise && maybePromise.catch && typeof maybePromise.catch === 'function') {
+                maybePromise.catch(next);
+            }
+        };
         action.__name__ = name;
         actions[app][name] = action;
         return action;
