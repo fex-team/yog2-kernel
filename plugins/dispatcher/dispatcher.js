@@ -135,6 +135,8 @@ module.exports = function (options) {
         }
         debuglog('get action file at [%s]', actionPath);
         var fn = require(actionPath);
+        // typescript compliant
+        fn = fn.default || fn;
         // wrap for async/await
         var action = function disptacherAction(req, res, next) {
             var maybePromise = fn(req, res, next);
@@ -188,9 +190,10 @@ module.exports = function (options) {
         router.action = function (actionName) {
             return getAction(routerName, actionName);
         };
-
         // load user defined router
         var customRouter = require(routerPath);
+        // typescript compliant
+        customRouter = customRouter.default || customRouter;
         customRouter(router);
 
         // add default router ruler
