@@ -6,6 +6,24 @@ var debuglog = require('debuglog')('yog/dispatcher');
 var fs = require('fs');
 var path = require('path');
 
+var VERB = {
+    'get': true,
+    'post': true,
+    'put': true,
+    'delete': true,
+    'copy': true,
+    'head': true,
+    'options': true,
+    'purge': true,
+    'lock': true,
+    'unlock': true,
+    'propfind': true,
+    'view': true,
+    'link': true,
+    'unlick': true,
+    'patch': true
+};
+
 module.exports = function (options) {
     var defaultRouter = options.defaultRouter || 'home';
     var defaultAction = options.defaultAction || 'index';
@@ -71,7 +89,7 @@ module.exports = function (options) {
                 req.url = shiftUrl(req.url);
                 debuglog('action is matched, remove action from url [%s]', req.url);
             }
-            excute(action, req, res, next);
+            action(req, res, next);
         };
     }
 
@@ -124,11 +142,6 @@ module.exports = function (options) {
             actionPath = [appPath, app, 'action', name + '/index.js'].join('/');
             if (!fs.existsSync(actionPath)) {
                 // mismatch action
-                // var errorMsg = [
-                //     'missing action [', app, '/', name, '], ',
-                //     'action loopup path [', [app, 'action', name + '.js'].join('/'), '] or ',
-                //     '[', [app, 'action', name + '/index.js'].join('/'), ']',
-                // ];
                 actions[app][name] = null;
                 return null;
             }
@@ -136,17 +149,53 @@ module.exports = function (options) {
         debuglog('get action file at [%s]', actionPath);
         var fn = require(actionPath);
         // typescript compliant
-        fn = fn.default || fn;
-        // wrap for async/await
-        var action = function disptacherAction(req, res, next) {
-            var maybePromise = fn(req, res, next);
-            if (maybePromise && maybePromise.catch && typeof maybePromise.catch === 'function') {
-                maybePromise.catch(next);
+        var action = fn.default || fn;
+        if (fn.default) {
+            for (var key in fn) {
+                if (fn.hasOwnProperty(key) && key !== 'default') {
+                    action[key] = fn[key];
+                }
             }
-        };
+        }
+        // wrap for async/await
+        action = wrapAsyncFunction(action);
         action.__name__ = name;
+        action = (function (originAction) {
+            return function (req, res, next) {
+                excute(originAction, req, res, next);
+            };
+        })(action);
         actions[app][name] = action;
         return action;
+    }
+
+    /**
+     * warp a action method to catch async error
+     * @param  {Function} fn [description]
+     * @return {[type]}      [description]
+     */
+    function wrapAsyncFunction(fn, isVerbAction) {
+        if (!fn || fn.__asyncWrapped__) {
+            return fn;
+        }
+        var wrapedFn = fn;
+        if (typeof fn === 'function') {
+            wrapedFn = function asyncWrap(req, res, next) {
+                var maybePromise = fn(req, res, next);
+                if (maybePromise && maybePromise.catch && typeof maybePromise.catch === 'function') {
+                    maybePromise.catch(next);
+                }
+            };
+        }
+        if (!isVerbAction) {
+            for (var verb in fn) {
+                if (fn.hasOwnProperty(verb) && VERB[verb.toLowerCase()]) {
+                    wrapedFn[verb] = wrapAsyncFunction(fn[verb], true);
+                }
+            }
+        }
+        wrapedFn.__asyncWrapped__ = true;
+        return wrapedFn;
     }
 
     function excute(action, req, res, next) {
@@ -158,7 +207,7 @@ module.exports = function (options) {
 
         var verbAction = action[req.method.toLowerCase()];
         debuglog('start action excution [%s] with method [%s]', action.__name__, req.method);
-        if (verbAction) {
+        if (verbAction && typeof verbAction === 'function') {
             if (typeof action === 'function') {
                 debuglog('excute action [%s] with default action method', action.__name__);
                 action(req, res, function () {
