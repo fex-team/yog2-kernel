@@ -36,7 +36,7 @@
     "response-time": "2.2.0",
     "serve-favicon": "2.1.7",
     "async": "1.4.2",
-    "bluebird": "2.10.0",
+    "bluebird": "3.0.6",
     "express": "4.13.3",
     "node-ral": "~0.4.0",
     "yog-log": "~0.0.20",
