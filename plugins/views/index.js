@@ -52,7 +52,12 @@ module.exports.views.defaultConf = {
     viewsDir: yog.ROOT_PATH + '/views',
     bigpipe: true,
     bigpipeOpt: {
-        skipAnalysis: true
+        skipAnalysis: true,
+        isSpiderMode: function (req) {
+            if (req.headers['user-agent'] && /bot|spider/.test(req.headers['user-agent'].toLowerCase())) {
+                return true;
+            }
+        },
     },
     tpl: {
         cache: 'memory'
