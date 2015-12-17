@@ -1,5 +1,16 @@
 ## CHANGELOG
 
+#### 0.6.0/ 2015年12月17日
+
+- deps: yog-view@0.4.0
+- deps: yog-bigpipe@0.3.0
+- deps: yog-swig@0.3.0
+- 支持 SpiderMode ，此模式下，所有 BigPipe 和 Quickling 数据均会同步渲染供爬虫使用
+- 支持 Action 返回 async function，并会统一处理 async function 的异常
+- res.bigpipe.bind 兼容 cb 模式和返回一个 Promise Factory的模式
+- conf/plugins/promise.js 中默认添加 overridePromise: true 配置项，全局的 Promise 会被替换为 bluebird
+- conf/plugins/view.js 中添加bigpipeOpt.isSpiderMode 配置项，默认匹配 UA 中包含 bot 或 spider 的请求
+
 #### 0.5.0/ 2015年12月3日
 
 - deps: node-ral@0.4.0, 支持mock, degrade配置
