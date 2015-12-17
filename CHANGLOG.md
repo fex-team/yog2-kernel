@@ -8,6 +8,7 @@
 - 支持 SpiderMode ，此模式下，所有 BigPipe 和 Quickling 数据均会同步渲染供爬虫使用
 - 支持 Action 返回 async function，并会统一处理 async function 的异常
 - res.bigpipe.bind 兼容 cb 模式和返回一个 Promise Factory的模式
+- bigpipe.bind 内的数据源如果发送异常，会将数据设置为 `{BigPipeFailed: true, err: err}` 返回至模板，用于异常处理
 - conf/plugins/promise.js 中默认添加 overridePromise: true 配置项，全局的 Promise 会被替换为 bluebird
 - conf/plugins/view.js 中添加bigpipeOpt.isSpiderMode 配置项，默认匹配 UA 中包含 bot 或 spider 的请求
 
