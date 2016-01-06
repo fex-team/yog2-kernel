@@ -13,12 +13,12 @@ function ResourceApi(config_dir) {
  * @param  {[type]} id [description]
  * @return {[type]}    [description]
  */
-ResourceApi.prototype.resolve = function(id) {
+ResourceApi.prototype.resolve = function (id) {
     var info = this.getInfo(id);
     return info ? info.uri : '';
 };
 
-ResourceApi.prototype.getInfo = function(id, ignorePkg) {
+ResourceApi.prototype.getInfo = function (id, ignorePkg) {
     if (!id || !idr.exec(id)) {
         return null;
     }
@@ -33,10 +33,14 @@ ResourceApi.prototype.getInfo = function(id, ignorePkg) {
         }
     }
 
+    if (info) {
+        info.id = id;
+    }
+
     return info;
 };
 
-ResourceApi.prototype.getPkgInfo = function(id) {
+ResourceApi.prototype.getPkgInfo = function (id) {
     if (!id || !idr.exec(id)) {
         return null;
     }
@@ -55,7 +59,8 @@ ResourceApi.prototype.getNS = function (id) {
     var p = id.indexOf(':');
     if (p != -1) {
         return id.substr(0, p);
-    } else {
+    }
+    else {
         return '__global__';
     }
 };
@@ -63,15 +68,16 @@ ResourceApi.prototype.getNS = function (id) {
 ResourceApi.prototype.lazyload = function (ns) {
     var map_json = ns + '-map.json';
     var stat;
-    
+
     if (ns == '__global__') {
         map_json = 'map.json';
     }
     map_json = path.join(this.config_dir, map_json);
-    
+
     try {
         stat = fs.statSync(map_json);
-    } catch(e) {
+    }
+    catch (e) {
         yog.log.fatal(map_json + ' not exist');
         return false;
     }
@@ -79,11 +85,13 @@ ResourceApi.prototype.lazyload = function (ns) {
     if (stat && stat.isFile()) {
         try {
             this.maps[ns] = JSON.parse(fs.readFileSync(map_json));
-        } catch (e) {
+        }
+        catch (e) {
             yog.log.fatal(map_json + ' parse failed');
             return false;
         }
-    } else {
+    }
+    else {
         return false;
     }
     return true;
@@ -106,7 +114,7 @@ module.exports = function (options) {
 
         res.fis = cache ? singlon : new ResourceApi(config_dir);
 
-        destroy = function() {
+        destroy = function () {
             res.removeListener('finish', destroy);
             //res.removeListener('close', destroy);
 
