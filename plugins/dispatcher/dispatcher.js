@@ -158,15 +158,23 @@ module.exports = function (options) {
             }
         }
         // wrap for async/await
-        action = wrapAsyncFunction(action);
-        action.__name__ = name;
-        action = (function (originAction) {
-            return function (req, res, next) {
-                excute(originAction, req, res, next);
-            };
-        })(action);
-        actions[app][name] = action;
-        return action;
+        var asyncAction = wrapAsyncFunction(action);
+        asyncAction.__name__ = name;
+        asyncAction = wrapExcute(asyncAction);
+        actions[app][name] = asyncAction;
+        return asyncAction;
+    }
+
+    function wrapExcute(action) {
+        var excuteFn = function (req, res, next) {
+            excute(action, req, res, next);
+        };
+        for (var key in action) {
+            if (action.hasOwnProperty(key)) {
+                excuteFn[key] = action[key];
+            }
+        }
+        return excuteFn;
     }
 
     /**
