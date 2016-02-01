@@ -22,7 +22,7 @@ module.exports.promise = ['ral',
             yog.ral = ralPromise;
             yog.ralOrigin = yog.RAL;
         }
-        if (conf.overridePromise && Promise) {
+        if (conf.overridePromise) {
             global.Promise = yog.Promise;
         }
     }
