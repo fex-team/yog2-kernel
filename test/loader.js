@@ -51,6 +51,19 @@ describe('loader.loadFolder', function () {
         result.c.dev.should.be.false;
     });
 
+    it('should load prefer file 2', function () {
+        var result = loader.loadFolder(__dirname + '/loader/dev', '.prod');
+        result.should.have.property('a');
+        result.should.not.have.property('b');
+        result.should.have.property('c');
+        result.should.have.property('d');
+        result.should.have.property('f');
+        result.a.dev.should.be.false;
+        result.c.dev.should.be.false;
+        result.d.default.should.be.true;
+        result.f.prod.should.be.true;
+    });
+
     it('should not load unmatched subfixed file', function () {
         var result = loader.loadFolder(__dirname + '/loader/dev', '');
         result.should.have.property('a');
