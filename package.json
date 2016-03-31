@@ -38,7 +38,7 @@
     "async": "1.4.2",
     "bluebird": "3.0.6",
     "express": "4.13.3",
-    "node-ral": "~0.5.0",
+    "node-ral": "~0.7.0",
     "yog-log": "~0.0.24",
     "yog-swig": "~0.3.0",
     "yog-bigpipe": "~0.3.0",
