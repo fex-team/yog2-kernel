@@ -14,6 +14,15 @@ module.exports['tar-recv-reload'] = function (app, conf) {
     var debuglog = require('debuglog')('yog/tar-recv-reload');
     var multiparty = require('multiparty');
     var tar = require('tar');
+
+    setTimeout(function () {
+        console.log('[NOTICE] tar-recv-reload plugin is running in ' + conf.receiverUrl +
+            ', please disable it in production');
+    }, 1000);
+
+    app.get(conf.receiverUrl, function (req, res) {
+        res.end(req.protocol + '://' + req.get('host') + conf.receiverUrl + ' is ready to work');
+    });
     app.post(conf.receiverUrl, function (req, res, next) {
         var to = null;
         var filePart = null;
@@ -59,6 +68,8 @@ module.exports['tar-recv-reload'] = function (app, conf) {
     });
 
     function extract(part, to) {
+        // 移除 to 中的文件名
+        to = path.dirname(to);
         // 创建解压流
         var extractStream = tar.Extract({
             path: path.join(yog.ROOT_PATH, to),
@@ -66,7 +77,9 @@ module.exports['tar-recv-reload'] = function (app, conf) {
         });
         // 将文件流发送至解压流
         debuglog('start untar package to [%s]', to);
-        part.pipe(extractStream);
+        part.pipe(extractStream).on('end', function () {
+            debuglog('untar package [%s] finished', to);
+        });
     }
 };
 
