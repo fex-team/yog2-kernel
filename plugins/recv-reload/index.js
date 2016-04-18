@@ -2,6 +2,8 @@
 
 var path = require('path');
 var debuglog = require('debuglog')('yog/recv-reload');
+var tar = require('tar');
+var yog = require('../../index.js');
 
 module.exports['recv-reload'] = ['dispatcher',
     function (app, conf) {
@@ -31,6 +33,55 @@ module.exports['recv-reload'] = ['dispatcher',
                 reloadView();
                 res.end('cache cleaned');
                 conf.onCacheClean && conf.onCacheClean();
+            });
+
+            app.post(conf.tarReceiverUrl, function (req, res, next) {
+                var to = null;
+                var filePart = null;
+
+                // 最大200mb
+                var form = new multiparty.Form({
+                    maxFieldsSize: conf.maxTarSize
+                });
+
+                function tryExtract() {
+                    if (filePart && to) {
+                        extract(filePart, to, function () {
+                            reloadApp();
+                            reloadView();
+                            conf.onCacheClean && conf.onCacheClean();
+                        });
+                    }
+                }
+
+                form.on('error', function (err) {
+                    return next(err);
+                });
+
+                form.on('part', function (part) {
+                    if (!part.filename) {
+                        streamToString(part, function (val) {
+                            debuglog('got to: [%s]', val);
+                            to = val;
+                            tryExtract();
+                        });
+                    }
+
+                    if (part.filename) {
+                        filePart = part;
+                        tryExtract();
+                    }
+
+                    part.on('error', function (err) {
+                        return next(err);
+                    });
+                });
+
+                form.on('close', function () {
+                    res.end('0');
+                });
+
+                form.parse(req);
             });
 
             app.post(conf.receiverUrl, function (req, res, next) {
@@ -94,6 +145,10 @@ module.exports['recv-reload'] = ['dispatcher',
 
             app.get(conf.receiverUrl, function (req, res) {
                 res.end(req.protocol + '://' + req.get('host') + conf.receiverUrl + ' is ready to work');
+            });
+
+            app.get(conf.tarReceiverUrl, function (req, res) {
+                res.end(req.protocol + '://' + req.get('host') + conf.tarReceiverUrl + ' is ready to work');
             });
 
             yog.reloadApp = reloadApp;
@@ -199,7 +254,7 @@ function startUploadStateCheck(timeout, cb) {
 
 
 function reloadApp(appName) {
-    debuglog('reload app', appName);
+    debuglog('reload app: %s', appName || 'all');
     appName = appName || '';
     var appPath = yog.conf.dispatcher.appPath || path.join(yog.ROOT_PATH, 'app');
     var appModulePath = path.join(appPath, appName);
@@ -233,6 +288,32 @@ function cleanCacheForFolder(moduleFolderPath) {
     }
 }
 
+function extract(part, to, cb) {
+    // 移除 to 中的文件名
+    to = path.dirname(to);
+    // 创建解压流
+    var extractStream = tar.Extract({
+        path: path.join(yog.ROOT_PATH, to),
+        strip: 0
+    });
+    // 将文件流发送至解压流
+    debuglog('start untar package to [%s]', to);
+    part.pipe(extractStream).on('end', function () {
+        debuglog('untar package [%s] finished', to);
+        cb && cb();
+    });
+}
+
+function streamToString(stream, cb) {
+    var chunks = [];
+    stream.on('data', function (chunk) {
+        chunks.push(chunk);
+    });
+    stream.on('end', function () {
+        cb(chunks.join(''));
+    });
+}
+
 function cleanCache(modulePath) {
     var module = require.cache[modulePath];
     // remove reference for cache
@@ -243,8 +324,10 @@ function cleanCache(modulePath) {
 }
 
 module.exports['recv-reload'].defaultConf = {
+    tarReceiverUrl: '/yog/uploadtar',
     cleanCacheUrl: '/yog/reload',
     receiverUrl: '/yog/upload',
     uploadTimeout: 30,
+    maxTarSize: '200mb',
     onCacheClean: null
 };
