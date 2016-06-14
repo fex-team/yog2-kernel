@@ -12,6 +12,5 @@ module.exports.ral = function(app, conf){
 
 module.exports.ral.defaultConf = {
     confDir: yog.ROOT_PATH + '/conf/ral',
-    mockDir: yog.ROOT_PATH + '/mock',
     logger: require('../log').log.defaultConf
 };
