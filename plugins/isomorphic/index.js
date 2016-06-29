@@ -4,6 +4,8 @@ var frontendFactoryCache = {};
 var debuglog = require('debuglog')('yog/isomorphic');
 
 module.exports.isomorphic = ['views', function (app, conf) {
+    var namespaceConnector = conf.namespaceConnector || ':';
+
     global.define = function (id, factory) {
         debuglog('isomorphic script', id, 'loaded');
         frontendFactoryCache['frontend_' + id] = factory;
@@ -32,7 +34,7 @@ module.exports.isomorphic = ['views', function (app, conf) {
     var originModuleLoad = Module._load.bind(Module);
 
     Module._load = function (request, parent, isMain) {
-        if (request.indexOf(':') === -1) {
+        if (request.indexOf(namespaceConnector) === -1) {
             return originModuleLoad(request, parent, isMain);
         }
         if (!frontendFactoryCache['frontend_' + request]) {
