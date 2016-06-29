@@ -5,158 +5,6 @@ var debuglog = require('debuglog')('yog/recv-reload');
 var tar = require('tar');
 var yog = require('../../index.js');
 
-module.exports['recv-reload'] = ['dispatcher',
-    function (app, conf) {
-        // only enable when YOG_DEBUG=true
-        if (yog.DEBUG) {
-            var cluster = require('cluster');
-            var multiparty = require('multiparty');
-            var fs = require('fs-extra');
-
-            setTimeout(function () {
-                if (cluster.isWorker) {
-                    console.log('[WARN] recv-reload plugin is better to run without cluster');
-                }
-                console.log('[NOTICE] recv-reload plugin is running in ' + conf.receiverUrl +
-                    ', please disable it in production');
-            }, 1000);
-
-            app.get(conf.cleanCacheUrl + '/:app', function (req, res) {
-                reloadApp(req.params.app);
-                reloadView();
-                res.end('cache cleaned');
-                conf.onCacheClean && conf.onCacheClean(req.params.app);
-            });
-
-            app.get(conf.cleanCacheUrl, function (req, res) {
-                reloadApp();
-                reloadView();
-                res.end('cache cleaned');
-                conf.onCacheClean && conf.onCacheClean();
-            });
-
-            app.post(conf.tarReceiverUrl, function (req, res, next) {
-                var to = null;
-                var filePart = null;
-
-                // 最大200mb
-                var form = new multiparty.Form({
-                    maxFieldsSize: conf.maxTarSize
-                });
-
-                function tryExtract() {
-                    if (filePart && to) {
-                        extract(filePart, to, function () {
-                            reloadApp();
-                            reloadView();
-                            conf.onCacheClean && conf.onCacheClean();
-                        });
-                    }
-                }
-
-                form.on('error', function (err) {
-                    return next(err);
-                });
-
-                form.on('part', function (part) {
-                    if (!part.filename) {
-                        streamToString(part, function (val) {
-                            debuglog('got to: [%s]', val);
-                            to = val;
-                            tryExtract();
-                        });
-                    }
-
-                    if (part.filename) {
-                        filePart = part;
-                        tryExtract();
-                    }
-
-                    part.on('error', function (err) {
-                        return next(err);
-                    });
-                });
-
-                form.on('close', function () {
-                    res.end('0');
-                });
-
-                form.parse(req);
-            });
-
-            app.post(conf.receiverUrl, function (req, res, next) {
-                if (uploadError) {
-                    return next(new Error('fs error'));
-                }
-                var goNext = function (err) {
-                    uploading--;
-                    return next(err);
-                };
-                uploading++;
-                total++;
-                startUploadStateCheck(conf.uploadTimeout, function () {
-                    // reload uploaded app
-                    var apps = Object.keys(waitingReloadApps);
-                    if (apps.length === 0) {
-                        reloadView();
-                    }
-                    else {
-                        for (var i = 0; i < apps.length; i++) {
-                            reloadApp(apps[i]);
-                        }
-                        reloadView();
-                    }
-                    conf.onCacheClean && conf.onCacheClean();
-                    waitingReloadApps = {};
-                    uploadError = false;
-                });
-                // parse a file upload 
-                var form = new multiparty.Form();
-                form.parse(req, function (err, fields, files) {
-                    if (err) return goNext(err);
-                    if (!files.file || !files.file[0]) return goNext(new Error('invalid upload file'));
-                    res.end('0');
-                    // record uploading app
-                    if (fields.to) {
-                        var paths = fields.to.toString().split(path.sep);
-                        var appRootPath = yog.conf.dispatcher.appPath || path.join(yog.ROOT_PATH, 'app');
-                        var deployPath = path.join(yog.ROOT_PATH, fields.to.toString());
-                        var appPath = path.relative(appRootPath, deployPath);
-                        if (appPath.indexOf('..') !== 0) {
-                            var appName = appPath.split(path.sep)[0];
-                            if (appName) {
-                                waitingReloadApps[appName] = true;
-                            }
-                        }
-                    }
-                    fs.move(
-                        files.file[0].path, yog.ROOT_PATH + fields.to, {
-                            clobber: true
-                        },
-                        function (err) {
-                            if (err) {
-                                uploadError = true;
-                            }
-                            uploading--;
-                        }
-                    );
-                });
-            });
-
-            app.get(conf.receiverUrl, function (req, res) {
-                res.end(req.protocol + '://' + req.get('host') + conf.receiverUrl + ' is ready to work');
-            });
-
-            app.get(conf.tarReceiverUrl, function (req, res) {
-                res.end(req.protocol + '://' + req.get('host') + conf.tarReceiverUrl + ' is ready to work');
-            });
-
-            yog.reloadApp = reloadApp;
-            yog.reloadView = reloadView;
-        }
-    }
-];
-
 /**
  * 上传监测到的app
  * @type {Object}
@@ -269,6 +117,19 @@ function reloadApp(appName) {
     }
 }
 
+function reloadIsomorphic() {
+    if (yog.plugins.isomorphic && yog.plugins.isomorphic.cleanCache) {
+        yog.plugins.isomorphic.cleanCache();
+        if (yog.conf.static) {
+            console.log('clean')
+            cleanCacheForFolder(yog.conf.static.staticPath);
+        } else {
+            cleanCacheForFolder(path.join(yog.ROOT_PATH, 'static'));
+        }
+        debuglog('clean isomorphic cache');
+    }
+}
+
 function reloadView() {
     if (yog.view && yog.view.cleanCache) {
         yog.view.cleanCache();
@@ -323,11 +184,163 @@ function cleanCache(modulePath) {
     delete require.cache[modulePath];
 }
 
+module.exports['recv-reload'] = ['dispatcher',
+    function (app, conf) {
+        // only enable when YOG_DEBUG=true
+        if (yog.DEBUG) {
+            var cluster = require('cluster');
+            var multiparty = require('multiparty');
+            var fs = require('fs-extra');
+
+            setTimeout(function () {
+                if (cluster.isWorker) {
+                    console.log('[WARN] recv-reload plugin is better to run without cluster');
+                }
+                console.log('[NOTICE] recv-reload plugin is running in ' + conf.receiverUrl +
+                    ', please disable it in production');
+            }, 1000);
+
+            app.get(conf.cleanCacheUrl + '/:app', function (req, res) {
+                reloadApp(req.params.app);
+                reloadView();
+                res.end('cache cleaned');
+                conf.onCacheClean && conf.onCacheClean(req.params.app);
+            });
+
+            app.get(conf.cleanCacheUrl, function (req, res) {
+                reloadApp();
+                reloadView();
+                res.end('cache cleaned');
+                conf.onCacheClean && conf.onCacheClean();
+            });
+
+            app.post(conf.tarReceiverUrl, function (req, res, next) {
+                var to = null;
+                var filePart = null;
+
+                // 最大200mb
+                var form = new multiparty.Form({
+                    maxFieldsSize: conf.maxTarSize
+                });
+
+                function tryExtract() {
+                    if (filePart && to) {
+                        extract(filePart, to, function () {
+                            reloadApp();
+                            reloadView();
+                            conf.onCacheClean && conf.onCacheClean();
+                        });
+                    }
+                }
+
+                form.on('error', function (err) {
+                    return next(err);
+                });
+
+                form.on('part', function (part) {
+                    if (!part.filename) {
+                        streamToString(part, function (val) {
+                            debuglog('got to: [%s]', val);
+                            to = val;
+                            tryExtract();
+                        });
+                    }
+
+                    if (part.filename) {
+                        filePart = part;
+                        tryExtract();
+                    }
+
+                    part.on('error', function (err) {
+                        return next(err);
+                    });
+                });
+
+                form.on('close', function () {
+                    res.end('0');
+                });
+
+                form.parse(req);
+            });
+
+            app.post(conf.receiverUrl, function (req, res, next) {
+                if (uploadError) {
+                    return next(new Error('fs error'));
+                }
+                var goNext = function (err) {
+                    uploading--;
+                    return next(err);
+                };
+                uploading++;
+                total++;
+                startUploadStateCheck(conf.uploadTimeout, function () {
+                    // reload uploaded app
+                    var apps = Object.keys(waitingReloadApps);
+                    if (conf.lazyAppReload) {
+                        for (var i = 0; i < apps.length; i++) {
+                            reloadApp(apps[i]);
+                        }
+                    } else {
+                        reloadApp();
+                    }
+                    reloadView();
+                    reloadIsomorphic();
+                    conf.onCacheClean && conf.onCacheClean();
+                    waitingReloadApps = {};
+                    uploadError = false;
+                });
+                // parse a file upload
+                var form = new multiparty.Form();
+                form.parse(req, function (err, fields, files) {
+                    if (err) return goNext(err);
+                    if (!files.file || !files.file[0]) return goNext(new Error('invalid upload file'));
+                    res.end('0');
+                    // record uploading app
+                    if (fields.to) {
+                        var appRootPath = yog.conf.dispatcher.appPath || path.join(yog.ROOT_PATH, 'app');
+                        var deployPath = path.join(yog.ROOT_PATH, fields.to.toString());
+                        var appPath = path.relative(appRootPath, deployPath);
+                        if (appPath.indexOf('..') !== 0) {
+                            var appName = appPath.split(path.sep)[0];
+                            if (appName) {
+                                waitingReloadApps[appName] = true;
+                            }
+                        }
+                    }
+                    fs.move(
+                        files.file[0].path, yog.ROOT_PATH + fields.to, {
+                            clobber: true
+                        },
+                        function (err) {
+                            if (err) {
+                                uploadError = true;
+                            }
+                            uploading--;
+                        }
+                    );
+                });
+            });
+
+            app.get(conf.receiverUrl, function (req, res) {
+                res.end(req.protocol + '://' + req.get('host') + conf.receiverUrl + ' is ready to work');
+            });
+
+            app.get(conf.tarReceiverUrl, function (req, res) {
+                res.end(req.protocol + '://' + req.get('host') + conf.tarReceiverUrl + ' is ready to work');
+            });
+
+            yog.reloadApp = reloadApp;
+            yog.reloadView = reloadView;
+        }
+    }
+];
+
 module.exports['recv-reload'].defaultConf = {
     tarReceiverUrl: '/yog/uploadtar',
     cleanCacheUrl: '/yog/reload',
     receiverUrl: '/yog/upload',
     uploadTimeout: 30,
     maxTarSize: '200mb',
-    onCacheClean: null
+    onCacheClean: null,
+    lazyAppReload: true
 };
