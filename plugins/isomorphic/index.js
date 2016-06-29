@@ -1,17 +1,17 @@
 var Module = require('module');
 var frontendCache = {};
 var frontendFactoryCache = {};
+var frontendLoaded = {};
 var debuglog = require('debuglog')('yog/isomorphic');
 
 module.exports.isomorphic = ['views', function (app, conf) {
     var namespaceConnector = conf.namespaceConnector || ':';
 
     global.define = function (id, factory) {
-        debuglog('isomorphic script', id, 'loaded');
         frontendFactoryCache['frontend_' + id] = factory;
     };
 
-    function getDeps(id) {
+    function getDeps(id, loaded) {
         let deps = [];
         var info = app.fis.getInfo(id);
         if (!info) {
@@ -19,13 +19,14 @@ module.exports.isomorphic = ['views', function (app, conf) {
         }
         if (info.deps) {
             info.deps.forEach(dep => {
-                deps = deps.concat(getDeps(dep));
+                deps = deps.concat(getDeps(dep, loaded));
             });
         }
-        if (info.type === 'js') {
+        if (info.type === 'js' && !loaded[info.subpath]) {
             if (!info.subpath) {
                 throw new Error('Please update your yog2 cli version to support isomorphic mode.');
             }
+            loaded[info.subpath] = true;
             deps.push(info.subpath);
         }
         return deps;
@@ -38,7 +39,7 @@ module.exports.isomorphic = ['views', function (app, conf) {
             return originModuleLoad(request, parent, isMain);
         }
         if (!frontendFactoryCache['frontend_' + request]) {
-            getDeps(request).forEach(dep => {
+            getDeps(request, frontendLoaded).forEach(dep => {
                 debuglog('require isomorphic script from', dep);
                 require(yog.ROOT_PATH + dep);
             });
@@ -59,6 +60,7 @@ module.exports.isomorphic = ['views', function (app, conf) {
 
     return {
         cleanCache: function () {
+            frontendLoaded = {};
             frontendCache = {};
             frontendFactoryCache = {};
         }

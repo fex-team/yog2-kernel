@@ -121,7 +121,6 @@ function reloadIsomorphic() {
     if (yog.plugins.isomorphic && yog.plugins.isomorphic.cleanCache) {
         yog.plugins.isomorphic.cleanCache();
         if (yog.conf.static) {
-            console.log('clean')
             cleanCacheForFolder(yog.conf.static.staticPath);
         } else {
             cleanCacheForFolder(path.join(yog.ROOT_PATH, 'static'));
@@ -342,5 +341,5 @@ module.exports['recv-reload'].defaultConf = {
     uploadTimeout: 30,
     maxTarSize: '200mb',
     onCacheClean: null,
-    lazyAppReload: true
+    lazyAppReload: false
 };
