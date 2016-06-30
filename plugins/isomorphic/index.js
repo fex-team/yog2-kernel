@@ -1,3 +1,5 @@
+'use strict';
+
 var Module = require('module');
 var frontendCache = {};
 var frontendFactoryCache = {};
@@ -12,7 +14,7 @@ module.exports.isomorphic = ['views', function (app, conf) {
     };
 
     function getDeps(id, loaded) {
-        let deps = [];
+        var deps = [];
         var info = app.fis.getInfo(id);
         if (!info) {
             return deps;
