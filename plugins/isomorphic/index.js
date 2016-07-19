@@ -20,7 +20,7 @@ module.exports.isomorphic = ['views', function (app, conf) {
             return deps;
         }
         if (info.deps) {
-            info.deps.forEach(dep => {
+            info.deps.forEach(function (dep) {
                 deps = deps.concat(getDeps(dep, loaded));
             });
         }
