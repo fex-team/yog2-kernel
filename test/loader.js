@@ -262,7 +262,8 @@ function mockYog() {
                 _INJECT_APP_: true
             },
             conf: {},
-            plugins: {}
+            plugins: {},
+            pluginFactories: {}
         }
     });
 }

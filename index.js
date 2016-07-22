@@ -11,6 +11,7 @@ var Yog = function () {
     this.loader = loader;
     this.require = null;
     this.plugins = {};
+    this.pluginFactories = {};
     this.conf = null;
     this.app = null;
     this._ = _;
