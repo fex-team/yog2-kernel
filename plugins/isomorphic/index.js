@@ -41,7 +41,7 @@ module.exports.isomorphic = ['views', function (app, conf) {
             return originModuleLoad(request, parent, isMain);
         }
         if (!frontendFactoryCache['frontend_' + request]) {
-            getDeps(request, frontendLoaded).forEach(dep => {
+            getDeps(request, frontendLoaded).forEach(function (dep) {
                 debuglog('require isomorphic script from', dep);
                 require(yog.ROOT_PATH + dep);
             });
