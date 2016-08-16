@@ -247,6 +247,10 @@ module.exports = function (options) {
         router.action = function (actionName) {
             return getAction(routerName, actionName);
         };
+        // support wrap raw async fn
+        router.wrapAsync = function (fn) {
+            return wrapAsyncFunction(fn, true);
+        };
         // load user defined router
         var customRouter = require(routerPath);
         // typescript compliant
