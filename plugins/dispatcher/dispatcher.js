@@ -11,6 +11,7 @@ var VERB = {
     'post': true,
     'put': true,
     'delete': true,
+    'del': true,
     'copy': true,
     'head': true,
     'options': true,
@@ -212,8 +213,12 @@ module.exports = function (options) {
             req.originalUrl,
             new Date() - req.__dispatcherStartTime__
         );
-
-        var verbAction = action[req.method.toLowerCase()];
+        var method = req.method.toLowerCase();
+        var verbAction = action[method];
+        // use del as delete alias
+        if (method === 'delete' && !verbAction) {
+            verbAction = action.del;
+        }
         debuglog('start action excution [%s] with method [%s]', action.__name__, req.method);
         if (verbAction && typeof verbAction === 'function') {
             if (typeof action === 'function') {
