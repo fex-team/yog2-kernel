@@ -183,7 +183,7 @@ module.exports = function (options) {
      * @param  {Function} fn [description]
      * @return {[type]}      [description]
      */
-    function wrapAsyncFunction(fn, isVerbAction) {
+    function wrapAsyncFunction(fn, isSubAction) {
         if (!fn || fn.__asyncWrapped__) {
             return fn;
         }
@@ -196,10 +196,14 @@ module.exports = function (options) {
                 }
             };
         }
-        if (!isVerbAction) {
-            for (var verb in fn) {
-                if (fn.hasOwnProperty(verb) && VERB[verb.toLowerCase()]) {
-                    wrapedFn[verb] = wrapAsyncFunction(fn[verb], true);
+        for (var key in fn) {
+            if (fn.hasOwnProperty(key)) {
+                if (!isSubAction && VERB[key.toLowerCase()]) {
+                    // 仅在顶级Action中自动寻找VERB Action进行异步包裹
+                    wrapedFn[key] = wrapAsyncFunction(fn[key], true);
+                } else {
+                    // 其余对象仅复制
+                    wrapedFn[key] = fn[key];
                 }
             }
         }
