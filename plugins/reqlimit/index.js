@@ -5,7 +5,7 @@
  * 根据服务状态进行流量控制
  */
 
-/* global: yog */
+/* global yog */
 
 'use strict';
 
