@@ -60,6 +60,7 @@ function core(app, conf){
 
 var defaultConf = {
     middleware: [
+        'reqlimit',
         'favicon',
         'compression',
         'static',

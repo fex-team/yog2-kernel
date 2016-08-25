@@ -17,7 +17,7 @@ function initEventLoop(conf) {
     return eventloop;
 }
 
-module.exports.reqlimit = function (app, conf) {
+module.exports.reqlimit = ['log', function (app, conf) {
     var shouldLimit = conf.shouldLimit;
     var onLimit = conf.onLimit;
     var eventloop;
@@ -47,13 +47,13 @@ module.exports.reqlimit = function (app, conf) {
             });
         });
     };
-};
+}];
 
 module.exports.reqlimit.defaultConf = {
     eventLoop: {
         interval: 300
     },
-    maxDelay: 300,
+    maxDelay: 1000,
     shouldLimit: function (info, conf, cb) {
         if (info.delay > conf.maxDelay) {
             return cb && cb(null, true);
