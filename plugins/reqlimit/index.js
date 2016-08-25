@@ -61,7 +61,9 @@ module.exports.reqlimit.defaultConf = {
         return cb && cb(null, false);
     },
     onEventLoopTick: function (tick) {
-        yog.log.notice('Current eventLoop delay is ' + tick);
+        if (tick > 15) {
+            yog.log.notice('Current eventLoop delay is ' + tick);
+        }
     },
     onLimit: function (req, res, next) {
         yog.log.fatal('Request ' + req.url + ' was refused since eventloop delay is too high.');
