@@ -4,6 +4,7 @@ var path = require('path');
 var debuglog = require('debuglog')('yog/recv-reload');
 var tar = require('tar');
 var yog = require('../../index.js');
+var EventEmitter = require('events').EventEmitter;
 
 /**
  * 上传监测到的app
@@ -185,6 +186,7 @@ function cleanCache(modulePath) {
 
 module.exports['recv-reload'] = ['dispatcher',
     function (app, conf) {
+        var ev = new EventEmitter();
         // only enable when YOG_DEBUG=true
         if (yog.DEBUG) {
             var cluster = require('cluster');
@@ -202,14 +204,18 @@ module.exports['recv-reload'] = ['dispatcher',
             app.get(conf.cleanCacheUrl + '/:app', function (req, res) {
                 reloadApp(req.params.app);
                 reloadView();
+                reloadIsomorphic();
                 res.end('cache cleaned');
+                ev.emit('cacheClean', [req.params.app]);
                 conf.onCacheClean && conf.onCacheClean(req.params.app);
             });
 
             app.get(conf.cleanCacheUrl, function (req, res) {
                 reloadApp();
                 reloadView();
+                reloadIsomorphic();
                 res.end('cache cleaned');
+                ev.emit('cacheClean');
                 conf.onCacheClean && conf.onCacheClean();
             });
 
@@ -227,6 +233,8 @@ module.exports['recv-reload'] = ['dispatcher',
                         extract(filePart, to, function () {
                             reloadApp();
                             reloadView();
+                            reloadIsomorphic();
+                            ev.emit('cacheClean');
                             conf.onCacheClean && conf.onCacheClean();
                         });
                     }
@@ -284,6 +292,7 @@ module.exports['recv-reload'] = ['dispatcher',
                     }
                     reloadView();
                     reloadIsomorphic();
+                    ev.emit('cacheClean', apps);
                     conf.onCacheClean && conf.onCacheClean();
                     waitingReloadApps = {};
                     uploadError = false;
@@ -330,7 +339,10 @@ module.exports['recv-reload'] = ['dispatcher',
 
             yog.reloadApp = reloadApp;
             yog.reloadView = reloadView;
+            yog.reloadIsomorphic = reloadIsomorphic;
         }
+        ev.cleanCacheForFolder = cleanCacheForFolder;
+        return ev;
     }
 ];
 
