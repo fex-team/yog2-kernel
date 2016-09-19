@@ -1,5 +1,6 @@
 var ralMiddleware = require('node-ral').Middleware;
 var ral = require('node-ral').RAL;
+var debuglog = require('debuglog')('yog/recv-reload');
 
 module.exports.ral = ['recv-reload', function(app, conf){
     yog.RAL = ral;
