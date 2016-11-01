@@ -7,7 +7,7 @@ module.exports.bodyParser = function(app, conf){
         app.use(util.wrapExclude(conf.urlencoded.exclude, bodyParser.urlencoded(conf.urlencoded)));
 
         // parse application/json
-        app.use(util.wrapExclude(conf.json.exclude, bodyParser.json()));
+        app.use(util.wrapExclude(conf.json.exclude, bodyParser.json(conf.urlencoded)));
     };
 };
 
