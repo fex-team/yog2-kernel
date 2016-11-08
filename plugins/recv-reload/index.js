@@ -5,6 +5,7 @@ var debuglog = require('debuglog')('yog/recv-reload');
 var tar = require('tar');
 var yog = require('../../index.js');
 var EventEmitter = require('events').EventEmitter;
+var zlib = require('zlib');
 
 /**
  * 上传监测到的app
@@ -159,10 +160,19 @@ function extract(part, to, cb) {
     });
     // 将文件流发送至解压流
     debuglog('start untar package to [%s]', to);
-    part.pipe(extractStream).on('end', function () {
+
+    extractStream.on('end', function () {
         debuglog('untar package [%s] finished', to);
         cb && cb();
     });
+
+    if (/\.tar\.gz$/.test(part.filename)) {
+        var ungz = zlib.createGunzip({});
+        ungz.pipe(extractStream);
+        part.pipe(ungz);
+    } else {
+        part.pipe(extractStream);
+    }
 }
 
 function streamToString(stream, cb) {
