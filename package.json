@@ -37,7 +37,7 @@
     "method-override": "2.3.7",
     "multiparty": "4.1.1",
     "response-time": "2.3.2",
-    "serve-favicon": "2.3.2",
+    "serve-favicon": "2.4.0",
     "tar": "2.2.1",
     "node-ral": "~0.17.0",
     "yog-bigpipe": "~0.4.0",
