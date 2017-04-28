@@ -57,6 +57,7 @@ module.exports = function (options) {
         debuglog('actually get router [%s]', router.__name__);
         if (router.__name__ === routerName && req.params.router) {
             req.url = shiftUrl(req.url);
+            req.baseUrl = (req.baseUrl || '') + '/' + routerName;
             debuglog('router is matched, remove router from url [%s]', req.url);
         }
         debuglog('[%s] lookup for user defined router', req.url);
@@ -88,6 +89,7 @@ module.exports = function (options) {
             debuglog('actually get action [%s]', action.__name__);
             if (action.__name__ === actionName && req.params.action) {
                 req.url = shiftUrl(req.url);
+                req.baseUrl = (req.baseUrl || '') + '/' + actionName;                
                 debuglog('action is matched, remove action from url [%s]', req.url);
             }
             action(req, res, next);
