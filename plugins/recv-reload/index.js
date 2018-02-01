@@ -230,6 +230,9 @@ module.exports['recv-reload'] = ['dispatcher',
             });
 
             app.post(conf.tarReceiverUrl, function (req, res, next) {
+                if (conf.disableReceiver) {
+                    return next(new Error('yog2 upload service was disabled'));
+                }
                 var to = null;
                 var filePart = null;
 
@@ -281,6 +284,9 @@ module.exports['recv-reload'] = ['dispatcher',
             });
 
             app.post(conf.receiverUrl, function (req, res, next) {
+                if (conf.disableReceiver) {
+                    return next(new Error('yog2 upload service was disabled'));
+                }
                 if (uploadError) {
                     return next(new Error('fs error'));
                 }
@@ -363,5 +369,6 @@ module.exports['recv-reload'].defaultConf = {
     uploadTimeout: 30,
     maxTarSize: '200mb',
     onCacheClean: null,
-    lazyAppReload: false
+    lazyAppReload: false,
+    disableReceiver: false
 };
