@@ -24,7 +24,7 @@
   "author": "fis@baidu.com",
   "license": "BSD",
   "dependencies": {
-    "async": "1.4.2",
+    "async": "2.4.1",
     "bluebird": "3.5.0",
     "body-parser": "1.17.2",
     "colors": "1.0.3",
