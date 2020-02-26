@@ -38,7 +38,7 @@
     "multiparty": "4.1.1",
     "response-time": "2.3.2",
     "serve-favicon": "2.4.3",
-    "tar": "2.2.1",
+    "tar": "6.0.1",
     "node-ral": "~0.18.0",
     "yog-bigpipe": "~0.4.0",
     "yog-log": "~0.1.0",
