@@ -34,7 +34,7 @@
     "express": "4.13.3",
     "fs-extra": "8.1.0",
     "lodash": "3.10.1",
-    "method-override": "2.3.9",
+    "method-override": "3.0.0",
     "multiparty": "4.1.1",
     "response-time": "2.3.2",
     "serve-favicon": "2.4.3",
