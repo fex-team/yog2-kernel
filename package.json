@@ -33,7 +33,7 @@
     "debuglog": "1.0.1",
     "express": "4.17.1",
     "fs-extra": "8.1.0",
-    "lodash": "4.17.15",
+    "lodash": "4.17.19",
     "method-override": "3.0.0",
     "multiparty": "4.2.1",
     "response-time": "2.3.2",
