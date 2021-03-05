@@ -1,6 +1,6 @@
 {
   "name": "yog2-kernel",
-  "version": "1.10.3",
+  "version": "1.10.4",
   "description": "yog2 kernel",
   "main": "index.js",
   "keywords": [
@@ -41,7 +41,7 @@
     "tar": "2.2.1",
     "node-ral": "~0.18.1",
     "yog-bigpipe": "~0.4.0",
-    "yog-log": "~0.1.7",
+    "yog-log": "~0.1.8",
     "yog-swig": "~0.6.0",
     "yog-view": "~0.9.2"
   },
