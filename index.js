@@ -35,9 +35,9 @@ Yog.prototype.bootstrap = function (options, cb) {
     //设置yog根目录，默认使用启动文件的目录
     rootPath = options.rootPath || path.dirname(require.main.filename);
     //设置plugins目录
-    pluginsPath = options.pluginsPath || (rootPath + '/plugins');
+    pluginsPath = options.pluginsPath || rootPath + '/plugins';
     //设置conf目录
-    confPath = options.confPath || (rootPath + '/conf/plugins');
+    confPath = options.confPath || rootPath + '/conf/plugins';
     //设置app，未设置则直接使用express
     this.app = options.app || express();
     //设置启动期的拦截
@@ -54,13 +54,16 @@ Yog.prototype.bootstrap = function (options, cb) {
     this.PLUGINS_PATH = pluginsPath;
     this.ROOT_PATH = rootPath;
     this.PLUGIN_TIMEOUT = process.env.PLUGIN_TIMEOUT || 3000;
-    this.DEBUG = (process.env.YOG_DEBUG === 'true') || false;
+    this.DEBUG = process.env.YOG_DEBUG === 'true' || false;
 
     //加载配置
     this.conf = loader.loadFolder(confPath, '.' + process.env.YOG_ENV || '');
     //加载插件
     loadPlugins(function (err) {
-        if (err) throw err;
+        if (err) {
+            console.error(err);
+            process.exit(1);
+        }
         started = true;
         cb && cb();
     });
