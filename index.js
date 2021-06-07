@@ -40,15 +40,6 @@ Yog.prototype.bootstrap = function (options, cb) {
     confPath = options.confPath || rootPath + '/conf/plugins';
     //设置app，未设置则直接使用express
     this.app = options.app || express();
-    //设置启动期的拦截
-    this.app.use(function (req, res, next) {
-        if (started) {
-            next();
-            return;
-        }
-        process.exit(1);
-        res.status(503).send('Server is starting...');
-    });
     //设置全局require
     this.require = require('./lib/require.js')(rootPath);
     //设置全局变量
