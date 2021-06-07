@@ -1,53 +1,53 @@
 {
-  "name": "yog2-kernel",
-  "version": "1.10.8",
-  "description": "yog2 kernel",
-  "main": "index.js",
-  "keywords": [
-    "nodejs",
-    "fis"
-  ],
-  "scripts": {
-    "pub": "npm publish --registry=http://registry.npmjs.org",
-    "test": "mocha --require should --reporter dot --globals yog --check-leaks test/",
-    "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --globals yog --check-leaks test/",
-    "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --globals yog --check-leaks --slow 0 test/"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/fex-team/yog2-kernel.git"
-  },
-  "bugs": {
-    "url": "https://github.com/fex-team/yog2-kernel/issues"
-  },
-  "homepage": "https://github.com/fex-team/yog2-kernel",
-  "author": "fis@baidu.com",
-  "license": "BSD",
-  "dependencies": {
-    "async": "1.4.2",
-    "bluebird": "3.7.2",
-    "body-parser": "1.19.0",
-    "colors": "1.4.0",
-    "compression": "1.7.4",
-    "cookie-parser": "1.4.4",
-    "debuglog": "1.0.1",
-    "express": "4.17.1",
-    "fs-extra": "8.1.0",
-    "lodash": "4.17.15",
-    "method-override": "3.0.0",
-    "multiparty": "4.2.2",
-    "response-time": "2.3.2",
-    "serve-favicon": "2.5.0",
-    "tar": "2.2.1",
-    "node-ral": "~0.18.4",
-    "yog-bigpipe": "~0.4.0",
-    "yog-log": "~0.1.8",
-    "yog-swig": "~0.6.0",
-    "yog-view": "~0.9.3"
-  },
-  "devDependencies": {
-    "istanbul": "0.3.0",
-    "mocha": "3.4.2",
-    "should": "11.2.1"
-  }
+    "name": "yog2-kernel",
+    "version": "1.10.9",
+    "description": "yog2 kernel",
+    "main": "index.js",
+    "keywords": [
+        "nodejs",
+        "fis"
+    ],
+    "scripts": {
+        "pub": "npm publish --registry=http://registry.npmjs.org",
+        "test": "mocha --require should --reporter dot --globals yog --check-leaks test/",
+        "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --globals yog --check-leaks test/",
+        "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --globals yog --check-leaks --slow 0 test/"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/fex-team/yog2-kernel.git"
+    },
+    "bugs": {
+        "url": "https://github.com/fex-team/yog2-kernel/issues"
+    },
+    "homepage": "https://github.com/fex-team/yog2-kernel",
+    "author": "fis@baidu.com",
+    "license": "BSD",
+    "dependencies": {
+        "async": "1.4.2",
+        "bluebird": "3.7.2",
+        "body-parser": "1.19.0",
+        "colors": "1.4.0",
+        "compression": "1.7.4",
+        "cookie-parser": "1.4.4",
+        "debuglog": "1.0.1",
+        "express": "4.17.1",
+        "fs-extra": "8.1.0",
+        "lodash": "4.17.15",
+        "method-override": "3.0.0",
+        "multiparty": "4.2.2",
+        "response-time": "2.3.2",
+        "serve-favicon": "2.5.0",
+        "tar": "2.2.1",
+        "node-ral": "~0.18.4",
+        "yog-bigpipe": "~0.4.0",
+        "yog-log": "~0.1.8",
+        "yog-swig": "~0.6.0",
+        "yog-view": "~0.9.3"
+    },
+    "devDependencies": {
+        "istanbul": "0.3.0",
+        "mocha": "3.4.2",
+        "should": "11.2.1"
+    }
 }

@@ -46,6 +46,7 @@ Yog.prototype.bootstrap = function (options, cb) {
             next();
             return;
         }
+        process.exit(1);
         res.status(503).send('Server is starting...');
     });
     //设置全局require
