@@ -1,6 +1,6 @@
 {
     "name": "yog2-kernel",
-    "version": "1.11.0",
+    "version": "1.11.1",
     "description": "yog2 kernel",
     "main": "index.js",
     "keywords": [
@@ -39,7 +39,7 @@
         "response-time": "2.3.2",
         "serve-favicon": "2.5.0",
         "tar": "2.2.1",
-        "node-ral": "~0.18.4",
+        "node-ral": "~0.18.5",
         "yog-bigpipe": "~0.4.0",
         "yog-log": "~0.2.2",
         "yog-swig": "~0.6.0",
